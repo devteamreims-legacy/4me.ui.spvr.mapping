@@ -11,7 +11,8 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
   '4me.core.lodash',
   'ngMaterial',
   '4me.ui.spvr.mapping.ctrlroom.services',
-  '4me.ui.spvr.mapping.sectors.services'
+  '4me.ui.spvr.mapping.sectors.services',
+  '4me.ui.spvr.mapping.ctrlroom.dialog.components'
 ])
 .component('fmeMapCwpButton', {
   restrict: 'E',
@@ -21,9 +22,8 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
   controller: cwpButtonController,
   controllerAs: 'cwpButton',
   templateUrl: 'views/spvr.mapping/app/ctrlroom/button.tpl.html'
-})
+});
 // Save / cancel changes button
-.directive('ctrlroomConfirmPanel', ctrlroomConfirmPanel);
 
 
 cwpButtonController.$inject = ['_', '$mdDialog', 'ctrlroomManager'];
@@ -62,68 +62,82 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager) {
   };
 
   cwpButton.showDialog = function(ev) {
-    return;
-    /* Filter out disabled positions */
-    if(vm.position.disabled === false) {
-      $mdDialog.show({
-        controller: ctrlroomDialogController,
-        controllerAs: 'vm',
-        bindToController: true,
-        templateUrl: 'views/ctrlroom/_dialog.html',
-        locals: {
-          position: vm.position
-        },
-        parent: angular.element(document.body),
-        targetEvent: ev,
-        clickOutsideToClose: true
-      });
+    // Return if cwp is disabled
+    if(cwpButton.cwp.disabled === true) {
+      return;
     }
-  }
+    /* Filter out disabled positions */
+    $mdDialog.show({
+      controller: cwpDialogController,
+      controllerAs: 'cwpDialog',
+      bindToController: true,
+      templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog.tpl.html',
+      locals: {
+        cwpId: cwpButton.cwp.id
+      },
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true
+    });
+  };
 
 }
 
-ctrlroomDialogController.$inject = ['_', '$scope', 'ctrlroomManager', 'position', '$mdDialog', 'treeSectors'];
-function ctrlroomDialogController(_, $scope, ctrlroomManager, position, $mdDialog, treeSectors) {
-  var vm = this;
-  vm.position = position;
-  vm.selectedSectors = [];
-  vm.newSectorString = '';
+cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog'];
+function cwpDialogController(_, ctrlroomManager, $mdDialog) {
+  var cwpDialog = this;
+  cwpDialog.cwp = ctrlroomManager.getCwp(cwpDialog.cwpId);
 
-  vm.cancel = function() {
+  if(!cwpDialog.cwp) {
+    console.log('Something awful just happened');
+    $mdDialog.cancel();
+  }
+
+  cwpDialog.selectedSectors = [];
+  cwpDialog.newSectorString = '';
+
+  cwpDialog.cancel = function() {
     $mdDialog.cancel();
   };
-  vm.confirm = function() {
+
+  cwpDialog.confirm = function() {
     // We need to add selectedSectors to our position
-    ctrlroomManager.addSectors(vm.position, vm.selectedSectors);
+    ctrlroomManager.addSectors(cwpDialog.cwp.id, cwpDialog.selectedSectors);
     $mdDialog.hide();
   };
 
-  vm.isLoading = function() {
-    if(ctrlroomManager.properties.loading === true) {
+  cwpDialog.isLoading = function() {
+    if(ctrlroomManager.isLoading() === true) {
       return true;
     } else {
       return false;
     }
   };
 
-  vm.isChecked = function(s) {
-    if(_.contains(vm.position.sectors, s)) {
+  cwpDialog.isChecked = function(s) {
+    if(_.contains(cwpDialog.cwp.sectors, s)) {
       /* Already bound to position */
       return true;
     }
-    if(_.contains(vm.selectedSectors, s)) {
+    if(_.contains(cwpDialog.selectedSectors, s)) {
       /* In selectedSectors */
       return true;
     }
     return false;
   };
 
-  vm.isDisabled = function(s) {
+  cwpDialog.isDisabled = function(s) {
     // Disable YR which is special
-    return s === 'YR' || _.contains(vm.position.sectors, s);
+    return s === 'YR' || _.contains(cwpDialog.cwp.sectors, s);
   };
 
-  vm.setSectorsFromString = function(s) {
+  cwpDialog.fromSuggestion = function(s) {
+    console.log('Called with');
+    console.log(s);
+    return;
+  }
+
+  cwpDialog.setSectorsFromString = function() {
     // Get sectors from string
     return treeSectors.getFromString(s)
     // Filter and assign to selectedSectors
@@ -142,7 +156,7 @@ function ctrlroomDialogController(_, $scope, ctrlroomManager, position, $mdDialo
     });
   };
 
-  vm.toggleSectorsFromString = function(s) {
+  cwpDialog.toggleSectorsFromString = function(s) {
     // Lookup string in treeSectors
     return treeSectors.getFromString(s)
     .then(function(sectors) {
@@ -152,26 +166,25 @@ function ctrlroomDialogController(_, $scope, ctrlroomManager, position, $mdDialo
     });
   };
 
-  vm.toggleSector = function(s) {
-    if(_.indexOf(vm.selectedSectors, s) !== -1) { // Already selected sector, remove it
+  cwpDialog.toggleSector = function(s) {
+    console.log('Called !');
+    console.log(s);
+    if(_.indexOf(cwpDialog.selectedSectors, s) !== -1) { // Already selected sector, remove it
       if(s === 'HR' || s === 'YR') {
-        vm.selectedSectors = _.without(vm.selectedSectors, 'HR', 'YR');
+        cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, 'HR', 'YR');
       } else {
-        vm.selectedSectors = _.without(vm.selectedSectors, s);
+        cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, s);
       }
     } else {
       if(s === 'HR' || s === 'YR') {
-        vm.selectedSectors.push('HR');
-        vm.selectedSectors.push('YR');
+        cwpDialog.selectedSectors.push('HR');
+        cwpDialog.selectedSectors.push('YR');
       } else {
-        vm.selectedSectors.push(s);
+        cwpDialog.selectedSectors.push(s);
       }
     }
     // Recompute newSectorString
-    vm.position.computeSectorString(_.union(vm.selectedSectors, vm.position.sectors))
-    .then(function(str) {
-      vm.newSectorString = str;
-    });
+    cwpDialog.newSectorString = cwpDialog.selectedSectors.join(',');
   };
 }
 

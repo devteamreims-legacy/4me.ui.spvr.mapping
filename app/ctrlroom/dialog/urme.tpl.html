@@ -1,0 +1,38 @@
+<div class="URME" layout="row" flex>
+  <fieldset layout="column" class="sectors-group 4H" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('4H')">4H</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HH', 'KH', 'XH', 'UH']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group 4E" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('4E')">4E</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HE', 'KE', 'XE', 'UE']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group KD2F" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('KD2F')">KD2F</legend>
+    <md-checkbox 
+      ng-repeat="s in ['KD', 'KF', 'UF']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group FIR" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('FIR')">FIR</legend>
+    <md-checkbox 
+      ng-repeat="s in ['E', 'SE']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+</div>

@@ -47,11 +47,6 @@ function ctrlroomManager(_, $http, $q, $log) {
 
   function getCwp(cwpId) {
     var cwp = _.findWhere(cwps, {id: parseInt(cwpId)});
-    // Nothing in cache
-    if(cwp === undefined) {
-      cwp = _createCwp(parseInt(cwpId));
-      cwps.push(cwp);
-    }
     return cwp;
   }
 
@@ -78,6 +73,10 @@ function ctrlroomManager(_, $http, $q, $log) {
         $log.debug('Parsing data for cwp : ');
         $log.debug(c);
         var cwp = getCwp(parseInt(c.id));
+        if(!cwp) {
+          cwp = _createCwp(parseInt(c.id));
+          cwps.push(cwp);
+        }
         cwp.disabled = c.disabled;
         cwp.name = c.name;
         cwp.sectors = c.sectors;

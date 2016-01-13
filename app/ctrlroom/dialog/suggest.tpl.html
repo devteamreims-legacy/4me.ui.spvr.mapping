@@ -1,0 +1,9 @@
+<h4>Suggestions</h4>
+<md-progress-linear ng-show="sectorSuggest.loading" class="md-warn" md-mode="query"></md-progress-linear>
+<div layout="row">
+  <md-button
+    class="md-raised"
+    ng-repeat="s in sectorSuggest.suggestedSectors track by $index"
+    ng-click="sectorSuggest.click(s)"
+  >{{s}}</md-button>
+</div>

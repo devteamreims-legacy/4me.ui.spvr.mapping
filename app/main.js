@@ -15,7 +15,11 @@ var m = angular
       '4me.core.notifications',
       '4me.core.errors',
       '4me.core.organs.services',
-      '4me.core.status'
+      '4me.core.status',
+      // Organ modules
+      '4me.ui.spvr.mapping.constants',
+      '4me.ui.spvr.mapping.ctrlroom',
+      '4me.ui.spvr.mapping.sectors'
   ]);
 
 /**
@@ -32,23 +36,20 @@ m.run(mappingRegistration);
 
 mappingConfig.$inject = ['$stateProvider'];
 function mappingConfig($stateProvider) {
-  $stateProvider.state('map', {
-    url: '/map',
-    templateUrl: 'views/spvr.map/app/index.tpl.html',
+  $stateProvider.state('mapping', {
+    url: '/mapping',
+    templateUrl: 'views/spvr.mapping/app/index.tpl.html',
     controller: mappingController,
     controllerAs: 'mapping'
   });
 };
 
-mappingRegistration = ['mainOrganService', '$state', '$injector', 'stub.notifications'];
-function mappingRegistration(mainOrganService, $state, $injector, notifications) {
-
-  console.log('Notifications');
-  console.log(notifications);
+mappingRegistration = ['mainOrganService', '$state', '$injector'];
+function mappingRegistration(mainOrganService, $state, $injector) {
   var r = mainOrganService.register({
-    name: 'map',
+    name: 'mapping',
     navigateTo: function() {
-      $state.go('map');
+      $state.go('mapping');
       this.getNotificationService().markAllAsRead();
     },
     getNotificationService: function() {

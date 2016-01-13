@@ -1,0 +1,24 @@
+// Position button overrides
+
+$pbDiameter: 100px;
+
+.cwp-tool {
+  position: absolute;
+  line-height: 60px;
+}
+
+.md-button.cwp-button {
+  line-height: inherit;
+  height: $pbDiameter;
+  width: $pbDiameter;
+  span {
+    display: block;
+  }
+  span.position {
+
+  }
+  span.sector {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}

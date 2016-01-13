@@ -26,24 +26,16 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
 .directive('ctrlroomConfirmPanel', ctrlroomConfirmPanel);
 
 
-cwpButtonController.$inject = ['_', '$mdDialog'];
-function cwpButtonController(_, $mdDialog) {
+cwpButtonController.$inject = ['_', '$mdDialog', 'ctrlroomManager'];
+function cwpButtonController(_, $mdDialog, ctrlroomManager) {
   var cwpButton = this;
   cwpButton.positionDisabled = true;
   cwpButton.loading = true;
 
-  cwpButton.cwp = {
-    id: 34,
-    name: 'P34',
-    disabled: false,
-    sectors: ['E', 'SE'],
-    sectorName: 'FIR'
-  };
+  cwpButton.cwp = ctrlroomManager.getCwp(cwpButton.cwpId);
 
   cwpButton.getClass = function() {
-    return 'md-accent';
-
-    if(ctrlroomManager.properties.loading === true) {
+    if(ctrlroomManager.isLoading() === true) {
       // No class when loading
       return '';
     }
@@ -62,9 +54,7 @@ function cwpButtonController(_, $mdDialog) {
   }
 
   cwpButton.isLoading = function() {
-    return false;
-
-    if(ctrlroomManager.properties.loading === true) {
+    if(ctrlroomManager.isLoading() === true) {
       return true;
     } else {
       return false;

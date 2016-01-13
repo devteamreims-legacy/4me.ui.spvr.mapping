@@ -116,22 +116,24 @@ function mappingStatus(statusFactory) {
 }
 
 
-mappingController.$inject = ['mapping.errors', 'mapping.notifications', '$state'];
-function mappingController(errors, notifications, $state) {
-  var stub = this;
+mappingController.$inject = ['mapping.errors', 'mapping.notifications', '$state', 'ctrlroomManager'];
+function mappingController(errors, notifications, $state, ctrlroomManager) {
+  var mapping = this;
 
-  stub.addError = function() {
-    errors.add('warning', 'info', 'test');
+  mapping.initialLoading = true;
+
+  ctrlroomManager.refreshFromBackend()
+  .then(function() {
+    mapping.initialLoading = false;
+  })
+  .catch(function() {
+    notifications.add('info', 'Could not load data from backend');
+  });
+
+  mapping.isLoading = function() {
+    return ctrlroomManager.isLoading();
   };
 
-  stub.addNotification = function(priority) {
-    var navigateTo = function() {
-      console.log('Going to mapping via notification');
-      $state.go('stub');
-    }
-    var randomString = Math.random().toString(36).substring(7);
-    notifications.add(priority || 'info', 'Test notification ' + randomString, {message: 'Test message', navigateTo: navigateTo});
-  };
 }
 
 }());

@@ -16,17 +16,19 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
   '4me.core.sectors.services',
   '4me.ui.spvr.mapping.errors',
   '4me.ui.spvr.mapping.api',
-  '4me.ui.spvr.mapping.status'
+  '4me.ui.spvr.mapping.status',
 ])
 .factory('ctrlroomManager', ctrlroomManager);
 
-ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status', 'mapping.api'];
-function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
+ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status', 'mapping.api', 'treeSectors'];
+function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   var service = {};
   var cwps = [];
   var properties = {
     loading: true
   };
+
+  var beforeChanges = [];
 
   var cdsBackendUrl = 'http://localhost:3000';
   var loadingPromise;
@@ -93,12 +95,75 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
 
   }
 
-  function bootstrap() {
-    if(!_.isEmpty(cwps)) {
-      return cwps;
-    } else {
-
+  function revert() {
+    if(!_.isEmpty(beforeChanges)) {
+      cwps = _.clone(beforeChanges);
     }
+    beforeChanges = [];
+  }
+
+  function addSectors(cwpId, sectors) {
+    if(!cwpId || !sectors) {
+      throw new Error('Argument error');
+    }
+
+    var cwp = getCwp(cwpId);
+    if(_.isEmpty(cwp)) {
+      throw new Error('Unknown CWP');
+    }
+
+    var s;
+    /* Check argument : string / array */
+    /* and convert to upper case */
+    if(_.isString(sectors)) {
+      sectors = [sectors.toUpperCase()];
+    }
+    if(_.isArray(sectors)) {
+      sectors = _.map(sectors, function(s) { return s.toUpperCase(); });
+    }
+    if(_.isEmpty(sectors)) {
+      throw new Error('Argument error');
+    }
+    sectors = sectors.sort();
+
+    /* Check for unknown sectors */
+    var elem = treeSectors.getElem();
+    if(!_.isEmpty(_.difference(sectors, elem))) {
+      throw new Error('Unknown sector in ' + sectors.join(','));
+    }
+
+    /* Copy cwps to beforeChanges to provide a possible reversion */
+    beforeChanges = _.cloneDeep(cwps);
+
+    /* Remove sectors from other sectors */
+    /* BEHOLD THE NESTED LOOP HELL */
+    // Loop through given sectors
+    _.each(sectors, function(s) {
+      // Loop through CWPs to find the one holding given sector
+      var oldCwp = _.find(cwps, function(c) {
+        return _.contains(c.sectors, s);
+      });
+      oldCwp.changed = true;
+      oldCwp.sectors = _.without(oldCwp.sectors, s);
+      // We could recompute here, but chances are we will be pulling more sectors from this cwp
+    });
+
+    /* Put sectors in our CWP */
+    cwp.sectors = _.union(sectors, cwp.sectors);
+    cwp.changed = true;
+
+    /* Recompute name for each 'changed' CWP */
+    _.each(_.filter(cwps, {changed: true}), function(c) {
+      var s = treeSectors.getFromSectors(c.sectors);
+      if(!s.name) {
+        s.name = c.sectors.join(',');
+      }
+      c.sectorName = s.name;
+    });
+
+    /* And return our CWP */
+    return cwp;
+
   }
 
   // API
@@ -106,11 +171,10 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
   service.getCwp = getCwp;
   service.refresh = refreshFromBackend;
   service.refreshFromBackend = refreshFromBackend;
+  service.revert = revert;
   service.commit = function() { return $q.resolve('Committed changes'); };
   service.isLoading = function() { return !!properties.loading; };
-  service.addSectors = function(cwpId, sectors) {
-    return;
-  };
+  service.addSectors = addSectors;
   return service;
 }
 

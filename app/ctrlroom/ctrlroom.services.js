@@ -31,13 +31,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
   var cdsBackendUrl = 'http://localhost:3000';
   var loadingPromise;
 
-  var apiEndpoints = {
-    getAll: api.rootPath + api.cwp.getAll,
-    getSingle: api.rootPath + api.cwp.getSingle, // + positionId
-    commit: api.rootPath + api.cwp.commit,// POST whole control room status
-  };
-
-
   function _createCwp(cwpId) {
     return {
       id: cwpId,
@@ -68,7 +61,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
 
     loadingPromise = $http({
       method: 'GET',
-      url: apiEndpoints.getAll
+      url: api.rootPath + api.cwp.getAll
     })
     .then(function(res) {
       $log.debug('Got cwp from backend !');

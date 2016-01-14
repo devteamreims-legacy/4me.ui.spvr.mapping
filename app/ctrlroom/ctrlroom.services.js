@@ -12,12 +12,14 @@
 
 angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
   '4me.core.config',
-  '4me.core.lodash'
+  '4me.core.lodash',
+  '4me.ui.spvr.mapping.errors',
+  '4me.ui.spvr.mapping.status'
 ])
 .factory('ctrlroomManager', ctrlroomManager);
 
-ctrlroomManager.$inject = ['_', '$http', '$q', '$log'];
-function ctrlroomManager(_, $http, $q, $log) {
+ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status'];
+function ctrlroomManager(_, $http, $q, $log, errors, status) {
   var service = {};
   var cwps = [];
   var properties = {
@@ -30,7 +32,7 @@ function ctrlroomManager(_, $http, $q, $log) {
   var apiEndpoints = {
     getAll: cdsBackendUrl + '/cwp',
     getSingle: cdsBackendUrl + '/cwp/', // + positionId
-    addSectors: '/cwp' // POST whole control room status
+    commit: '/cwp' // POST whole control room status
   };
 
 
@@ -47,16 +49,17 @@ function ctrlroomManager(_, $http, $q, $log) {
 
   function getCwp(cwpId) {
     var cwp = _.findWhere(cwps, {id: parseInt(cwpId)});
-    return cwp;
+    return cwp || {};
   }
 
   function refreshFromBackend() {
-    return _loadFromBackend();
+    return _getFromBackend();
   }
 
-  function _loadFromBackend() {
+  function _getFromBackend() {
     properties.loading = true;
     if(loadingPromise !== undefined) {
+      console.log('Already loading');
       // We are currently already loading stuff from backend
       return loadingPromise;
     }
@@ -67,13 +70,9 @@ function ctrlroomManager(_, $http, $q, $log) {
     })
     .then(function(res) {
       $log.debug('Got cwp from backend !');
-      $log.debug(res.data);
-
       _.each(res.data, function(c) {
-        $log.debug('Parsing data for cwp : ');
-        $log.debug(c);
         var cwp = getCwp(parseInt(c.id));
-        if(!cwp) {
+        if(_.isEmpty(cwp)) {
           cwp = _createCwp(parseInt(c.id));
           cwps.push(cwp);
         }
@@ -84,17 +83,39 @@ function ctrlroomManager(_, $http, $q, $log) {
       });
 
       properties.loading = false;
+      loadingPromise = undefined;
       return cwps;
+    })
+    .catch(function(err) {
+      errors.add('critical', 'Could not load data from backend', err);
+      status.escalate('ctrlroomManager', 'critical', 'Could not load data from backend', err);
+      properties.loading = false;
+      loadingPromise = undefined;
+      return $q.reject(err);
     });
 
     return loadingPromise;
 
   }
 
+  function bootstrap() {
+    if(!_.isEmpty(cwps)) {
+      return cwps;
+    } else {
+
+    }
+  }
+
   // API
+  service.bootstrap = refreshFromBackend;
   service.getCwp = getCwp;
+  service.refresh = refreshFromBackend;
   service.refreshFromBackend = refreshFromBackend;
-  service.isLoading = function() { return !!properties.loading; }
+  service.commit = function() { return $q.resolve('Committed changes'); };
+  service.isLoading = function() { return !!properties.loading; };
+  service.addSectors = function(cwpId, sectors) {
+    return;
+  };
   return service;
 }
 

@@ -17,6 +17,9 @@ var m = angular
       '4me.core.organs.services',
       '4me.core.status',
       // Organ modules
+      '4me.ui.spvr.mapping.errors',
+      '4me.ui.spvr.mapping.notifications',
+      '4me.ui.spvr.mapping.status',
       '4me.ui.spvr.mapping.constants',
       '4me.ui.spvr.mapping.ctrlroom',
       '4me.ui.spvr.mapping.sectors'
@@ -40,7 +43,12 @@ function mappingConfig($stateProvider) {
     url: '/mapping',
     templateUrl: 'views/spvr.mapping/app/index.tpl.html',
     controller: mappingController,
-    controllerAs: 'mapping'
+    controllerAs: 'mapping',
+    resolve: {
+      ctrlroom: ['ctrlroomManager', function(ctrlroomManager) {
+        return ctrlroomManager.bootstrap();
+      }]
+    }
   });
 };
 
@@ -73,7 +81,11 @@ function mappingRegistration(mainOrganService, $state, $injector) {
  *
  */
 
-m.factory('mapping.errors', mappingErrors);
+angular.module('4me.ui.spvr.mapping.errors', [
+  '4me.core.lodash',
+  '4me.core.errors'
+])
+.factory('mapping.errors', mappingErrors);
 
 mappingErrors.$inject = ['_', 'errors'];
 function mappingErrors(_, errors) {
@@ -86,7 +98,11 @@ function mappingErrors(_, errors) {
   return _.defaults(service, errors);
 }
 
-m.factory('mapping.notifications', mappingNotifications);
+angular.module('4me.ui.spvr.mapping.notifications', [
+  '4me.core.lodash',
+  '4me.core.notifications'
+])
+.factory('mapping.notifications', mappingNotifications);
 
 mappingNotifications.$inject = ['_', 'notifications'];
 function mappingNotifications(_, notifications) {
@@ -107,7 +123,11 @@ function mappingNotifications(_, notifications) {
 
 
 // We need another full service here, not some proxy status service
-m.factory('mapping.status', mappingStatus);
+angular.module('4me.ui.spvr.mapping.status', [
+  '4me.core.lodash',
+  '4me.core.status'
+])
+.factory('mapping.status', mappingStatus);
 
 mappingStatus.$inject = ['statusFactory'];
 function mappingStatus(statusFactory) {
@@ -120,15 +140,7 @@ mappingController.$inject = ['mapping.errors', 'mapping.notifications', '$state'
 function mappingController(errors, notifications, $state, ctrlroomManager) {
   var mapping = this;
 
-  mapping.initialLoading = true;
-
-  ctrlroomManager.refreshFromBackend()
-  .then(function() {
-    mapping.initialLoading = false;
-  })
-  .catch(function() {
-    notifications.add('info', 'Could not load data from backend');
-  });
+  mapping.initialLoading = false;
 
   mapping.isLoading = function() {
     return ctrlroomManager.isLoading();

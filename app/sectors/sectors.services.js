@@ -13,6 +13,4 @@ angular.module('4me.ui.spvr.mapping.sectors.services', [
   '4me.core.sectors.services'
 ]);
 
-// TODO : This might belong into core (treeView and all)
-
 }());

@@ -13,13 +13,15 @@
 angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
   '4me.core.config',
   '4me.core.lodash',
+  '4me.core.sectors.services',
   '4me.ui.spvr.mapping.errors',
+  '4me.ui.spvr.mapping.api',
   '4me.ui.spvr.mapping.status'
 ])
 .factory('ctrlroomManager', ctrlroomManager);
 
-ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status'];
-function ctrlroomManager(_, $http, $q, $log, errors, status) {
+ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status', 'mapping.api'];
+function ctrlroomManager(_, $http, $q, $log, errors, status, api) {
   var service = {};
   var cwps = [];
   var properties = {
@@ -30,9 +32,9 @@ function ctrlroomManager(_, $http, $q, $log, errors, status) {
   var loadingPromise;
 
   var apiEndpoints = {
-    getAll: cdsBackendUrl + '/cwp',
-    getSingle: cdsBackendUrl + '/cwp/', // + positionId
-    commit: '/cwp' // POST whole control room status
+    getAll: api.rootPath + api.cwp.getAll,
+    getSingle: api.rootPath + api.cwp.getSingle, // + positionId
+    commit: api.rootPath + api.cwp.commit,// POST whole control room status
   };
 
 

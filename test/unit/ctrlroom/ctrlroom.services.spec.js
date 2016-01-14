@@ -8,6 +8,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     var $q;
     var errors;
     var status;
+    var api;
 
     var cdsBackendUrl = 'http://localhost:3000';
 
@@ -54,14 +55,15 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     };
 
     beforeEach(inject(
-      ['ctrlroomManager', '$httpBackend', '$rootScope', '$q', 'mapping.errors', 'mapping.status',
-      function(_ctrlroomManager_, _$httpBackend_, _$rootScope_, _$q_, _errors_, _status_) {
+      ['ctrlroomManager', '$httpBackend', '$rootScope', '$q', 'mapping.errors', 'mapping.status', 'mapping.api',
+      function(_ctrlroomManager_, _$httpBackend_, _$rootScope_, _$q_, _errors_, _status_, _api_) {
         ctrlroomManager = _ctrlroomManager_;
         $httpBackend = _$httpBackend_;
         $rootScope = _$rootScope_;
         $q = _$q_;
         errors = _errors_;
         status = _status_;
+        api = _api_;
       }
     ]));
 
@@ -79,7 +81,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
 
     it('should be able to be bootstrapped', function(done) {
       $httpBackend
-        .when('GET', apiEndpoints.getAll)
+        .when('GET', api.rootPath + api.cwp.getAll)
         .respond(resultsFromBackend.getAll);
 
       ctrlroomManager.bootstrap()
@@ -92,7 +94,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     describe('without backend', function() {
       beforeEach(function() {
         $httpBackend
-          .when('GET', apiEndpoints.getAll)
+          .when('GET', api.rootPath + api.cwp.getAll)
           .respond(404, '');
 
         status.escalate = sinon.stub();
@@ -120,7 +122,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     describe('bootstrapped', function() {
       beforeEach(function() {
         $httpBackend
-          .when('GET', apiEndpoints.getAll)
+          .when('GET', api.rootPath + api.cwp.getAll)
           .respond(resultsFromBackend.getAll);
 
         ctrlroomManager.bootstrap()

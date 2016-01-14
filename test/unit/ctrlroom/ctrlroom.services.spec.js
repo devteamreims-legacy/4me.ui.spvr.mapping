@@ -67,7 +67,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
         api = _api_;
         treeSectors = _treeSectors_;
 
-        treeSectors.getFromSectors = sinon.stub().returns('UXH');
+        treeSectors.getFromSectors = sinon.stub().returns({name: 'UXH'});
         treeSectors.getElem = sinon.stub().returns(['UH', 'XH', 'KH', 'HH', 'KD', 'KF', 'UF']);
       }
     ]));
@@ -200,6 +200,14 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.addSectors(22, ['UF']);
           treeSectors.getFromSectors.should.have.been.calledWith(['UF']);
           treeSectors.getFromSectors.should.have.been.calledWith(['KD', 'KF']);
+          ctrlroomManager.getCwp(22).sectorName.should.eql('UXH');
+          ctrlroomManager.getCwp(20).sectorName.should.eql('UXH');
+        });
+
+        it('should provide some kind of string even when treeSectors failed to do so', function() {
+          treeSectors.getFromSectors = sinon.stub().returns({});
+          ctrlroomManager.addSectors(22, ['UF', 'KF']);
+          ctrlroomManager.getCwp(22).sectorName.should.eql('KF,UF');
         });
       });
 

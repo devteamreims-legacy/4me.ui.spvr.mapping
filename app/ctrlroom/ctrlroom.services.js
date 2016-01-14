@@ -155,10 +155,13 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     /* Recompute name for each 'changed' CWP */
     _.each(_.filter(cwps, {changed: true}), function(c) {
       var s = treeSectors.getFromSectors(c.sectors);
-      if(!s.name) {
-        s.name = c.sectors.join(',');
+      var name;
+      if(s.name === undefined) {
+        name = c.sectors.join(',');
+      } else {
+        name = s.name;
       }
-      c.sectorName = s.name;
+      c.sectorName = name;
     });
 
     /* And return our CWP */

@@ -220,6 +220,14 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.getCwp(22).should.eql(oldCwp);
         });
 
+        it('should support multiple calls', function() {
+          var cwp22 = _.clone(ctrlroomManager.getCwp(22));
+          ctrlroomManager.addSectors(22, ['UF']);
+          ctrlroomManager.revert();
+          ctrlroomManager.revert();
+          ctrlroomManager.getCwp(22).should.eql(cwp22);
+        });
+
         it('should support multiple changes', function() {
           var cwp22 = _.clone(ctrlroomManager.getCwp(22));
           var cwp20 = _.clone(ctrlroomManager.getCwp(20));

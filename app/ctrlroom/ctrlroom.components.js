@@ -131,9 +131,14 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
     return s === 'YR' || _.contains(cwpDialog.cwp.sectors, s);
   };
 
-  cwpDialog.fromSuggestion = function(s) {
-    console.log('Called with');
-    console.log(s);
+  cwpDialog.fromSuggestion = function(str) {
+    var sectorGroup = treeSectors.getFromString(str);
+    if(_.isEmpty(sectorGroup)) {
+      console.log('This should never happen');
+      return;
+    }
+    cwpDialog.selectedSectors = sectorGroup.elementarySectors;
+    cwpDialog.confirm();
     return;
   };
 
@@ -154,8 +159,8 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
     /*
      * YR has a special status
      * For now, this sector exists but can't be unbound from HR
-     * Therefore, we won't compute anything if YR is added
-     * We'll just assume its status is bound to HR
+     * Therefore, we won't compute anything if YR is added or removed
+     * We'll just assume the same status as HR
      */
 
     if(s === 'YR') {
@@ -163,21 +168,27 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
     }
     if(_.indexOf(cwpDialog.selectedSectors, s) !== -1) { // Already selected sector, remove it
       if(s === 'HR') {
-        cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, 'HR', 'YR');
-      } else {
-        cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, s);
+        cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, 'YR');
       }
+      cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, s);
     } else {
       if(s === 'HR') {
-        cwpDialog.selectedSectors.push('HR');
         cwpDialog.selectedSectors.push('YR');
-      } else {
-        cwpDialog.selectedSectors.push(s);
       }
+      cwpDialog.selectedSectors.push(s);
     }
     // Recompute newSectorString
-    cwpDialog.newSectorString = cwpDialog.selectedSectors.join(',');
+    _recomputeSectorString();
   };
+
+  function _recomputeSectorString() {
+    var sector = treeSectors.getFromSectors(cwpDialog.selectedSectors);
+    if(!_.isEmpty(sector)) {
+      cwpDialog.newSectorString = sector.name;
+    } else {
+      cwpDialog.newSectorString = cwpDialog.selectedSectors.join(',');
+    }
+  }
 }
 
 function ctrlroomConfirmPanel(_, ctrlroomManager) {

@@ -133,7 +133,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           .when('GET', api.rootPath + api.cwp.getAll)
           .respond(resultsFromBackend.getAll);
 
-        $httpBackend
+        backend.commit = $httpBackend
           .when('POST', api.rootPath + api.cwp.commit)
           .respond(resultsFromBackend.getAll);
 
@@ -334,6 +334,29 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
 
           $httpBackend.flush();
         });
+
+        describe('failure', function() {
+          beforeEach(function() {
+            backend.commit.respond(404, '');
+          });
+
+          it('should fail gracefully', function(done) {
+            ctrlroomManager.commit().should.be.rejected.and.notify(done);
+            $httpBackend.flush();
+          });
+
+          it('should preserve changes', function(done) {
+            ctrlroomManager.addSectors(22, ['UF']);
+            ctrlroomManager.commit()
+            .catch(function() {
+              ctrlroomManager.hasChanges().should.eql(true);
+              done();
+            });
+            $httpBackend.flush();
+          });
+        });
+
+
       });
     });
 

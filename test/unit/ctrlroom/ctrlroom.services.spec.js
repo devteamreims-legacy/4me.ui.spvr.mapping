@@ -219,6 +219,20 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.revert();
           ctrlroomManager.getCwp(22).should.eql(oldCwp);
         });
+
+        it('should support multiple changes', function() {
+          var cwp22 = _.clone(ctrlroomManager.getCwp(22));
+          var cwp20 = _.clone(ctrlroomManager.getCwp(20));
+
+          ctrlroomManager.addSectors(22, ['UF']);
+          // Bind UF to CWP#22, 22 is now ['UF'], 20 is now ['KD', 'KF']
+          ctrlroomManager.addSectors(22, ['KF'])
+          // 22 is now ['UF', 'KF'], 20 is now ['KD']
+          ctrlroomManager.revert();
+
+          ctrlroomManager.getCwp(22).should.eql(cwp22);
+          ctrlroomManager.getCwp(20).should.eql(cwp20);
+        });
       });
 
       describe('hasChanges', function() {

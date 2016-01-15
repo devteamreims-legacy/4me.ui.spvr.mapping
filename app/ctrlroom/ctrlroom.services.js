@@ -79,6 +79,8 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
         cwp.sectorName = c.sectorName;
       });
 
+      beforeChanges = []; // Reset before changes when data is loaded
+
       properties.loading = false;
       loadingPromise = undefined;
       return cwps;
@@ -146,7 +148,13 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
     /* Copy cwps to beforeChanges to provide a possible reversion */
     /* TODO : This won't work with multiple consecutive changes performed */
-    beforeChanges = _.cloneDeep(cwps);
+    //beforeChanges = _.cloneDeep(cwps);
+
+    if(_.isEmpty(beforeChanges)) { // This is the first change before commit/revert
+      beforeChanges = _.cloneDeep(cwps);
+    } else { // We already have a beforeChanges saved, revert point is already set, do nothing
+
+    }
 
     /* Remove sectors from other sectors */
     /* BEHOLD THE NESTED LOOP HELL */
@@ -193,6 +201,13 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
 
     /* On success, refresh data from backend */
+
+    _.each(cwps, function(c) {
+      c.changed = false;
+    });
+
+    beforeChanges = [];
+
     return $q.resolve('Committed changes');
   }
 

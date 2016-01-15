@@ -1,0 +1,20 @@
+<div class="URMN" layout="row" flex>
+  <fieldset layout="column" class="sectors-group 5R" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('5R')">5R</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HR', 'YR', 'KR', 'XR', 'UR']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group 4N" flex>
+    <legend ng-click="cwpDialog.toggleSectorsFromString('4N')">4N</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HN', 'KN', 'UB', 'UN']" 
+      ng-checked="cwpDialog.isChecked(s)"
+      ng-disabled="cwpDialog.isDisabled(s)"
+      ng-click="!cwpDialog.isDisabled(s) && cwpDialog.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+</div>

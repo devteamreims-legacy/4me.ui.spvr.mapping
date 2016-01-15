@@ -49,4 +49,11 @@ dialogComponents.component('fmeMapUrmeSectors', {
   templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urme.tpl.html'
 });
 
+// <fme-map-urme-sectors>
+dialogComponents.component('fmeMapUrmnSectors', {
+  restrict: 'E',
+  isolate: false,
+  templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urmn.tpl.html'
+});
+
 }());

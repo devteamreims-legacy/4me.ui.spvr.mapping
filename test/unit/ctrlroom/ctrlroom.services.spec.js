@@ -68,7 +68,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
         treeSectors = _treeSectors_;
 
         treeSectors.getFromSectors = sinon.stub().returns({name: 'UXH'});
-        treeSectors.getElem = sinon.stub().returns(['UH', 'XH', 'KH', 'HH', 'KD', 'KF', 'UF']);
+        treeSectors.getElementary = sinon.stub().returns(['UH', 'XH', 'KH', 'HH', 'KD', 'KF', 'UF']);
       }
     ]));
 
@@ -78,6 +78,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
       ctrlroomManager.refresh.should.be.a('function');
       ctrlroomManager.commit.should.be.a('function');
       ctrlroomManager.isLoading.should.be.a('function');
+      ctrlroomManager.hasChanges.should.be.a('function');
     });
 
     it('should return empty stuff when not bootstrapped', function() {
@@ -214,16 +215,43 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
       describe('revert', function() {
         it('should provide a revert mecanism', function() {
           var oldCwp = _.clone(ctrlroomManager.getCwp(22));
-
-          console.log(oldCwp);
-
           ctrlroomManager.addSectors(22, ['UF']);
-
           ctrlroomManager.revert();
-
-          console.log(ctrlroomManager.getCwp(22));
-
           ctrlroomManager.getCwp(22).should.eql(oldCwp);
+        });
+      });
+
+      describe('hasChanges', function() {
+        it('should set to true when changes happen', function() {
+          ctrlroomManager.hasChanges().should.eql(false);
+          ctrlroomManager.addSectors(22, ['UF']);
+          ctrlroomManager.hasChanges().should.eql(true);
+        });
+
+        it('should revert to false when changes are reverted', function() {
+          ctrlroomManager.addSectors(22, ['UF']);
+          ctrlroomManager.revert();
+          ctrlroomManager.hasChanges().should.eql(false);
+        });
+
+        it('should revert to false when changes are commited', function(done) {
+          ctrlroomManager.addSectors(22, ['UF']);
+          ctrlroomManager.commit()
+          .then(function() {
+            ctrlroomManager.hasChanges().should.eql(false);
+            done();
+          });
+          $rootScope.$digest();
+        });
+      });
+
+      describe('commit', function() {
+        beforeEach(function() {
+
+        });
+
+        it('should fail', function() {
+          ctrlroomManager.commit().should.be.fulfilled;
         });
       });
     });

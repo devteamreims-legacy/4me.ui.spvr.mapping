@@ -127,7 +127,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     sectors = sectors.sort();
 
     /* Check for unknown sectors */
-    var elem = treeSectors.getElem();
+    var elem = treeSectors.getElementary();
     if(!_.isEmpty(_.difference(sectors, elem))) {
       throw new Error('Unknown sector in ' + sectors.join(','));
     }
@@ -169,15 +169,30 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
   }
 
+  function hasChanges() {
+    return !_.isEmpty(beforeChanges);
+  }
+
+  function commit() {
+    /* Send http post request*/
+
+    /* On failure, raise an error */
+
+
+    /* On success, refresh data from backend */
+    return $q.resolve('Committed changes');
+  }
+
   // API
   service.bootstrap = refreshFromBackend;
   service.getCwp = getCwp;
   service.refresh = refreshFromBackend;
   service.refreshFromBackend = refreshFromBackend;
   service.revert = revert;
-  service.commit = function() { return $q.resolve('Committed changes'); };
+  service.commit = commit;
   service.isLoading = function() { return !!properties.loading; };
   service.addSectors = addSectors;
+  service.hasChanges = hasChanges;
   return service;
 }
 

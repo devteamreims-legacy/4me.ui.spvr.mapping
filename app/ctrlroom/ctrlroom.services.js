@@ -96,8 +96,20 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   }
 
   function revert() {
+    /* This fucks up angular dirty checking, we need to preserve references here */
+    /*
     if(!_.isEmpty(beforeChanges)) {
       cwps = _.clone(beforeChanges);
+    }
+    */
+    if(!_.isEmpty(beforeChanges)) {
+      _.each(cwps, function(c) {
+        if(c.changed === false) {
+          return;
+        }
+        var oldCwp = _.findWhere(beforeChanges, {id: c.id});
+        _.assign(c, oldCwp);
+      });
     }
     beforeChanges = [];
   }
@@ -133,6 +145,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     }
 
     /* Copy cwps to beforeChanges to provide a possible reversion */
+    /* TODO : This won't work with multiple consecutive changes performed */
     beforeChanges = _.cloneDeep(cwps);
 
     /* Remove sectors from other sectors */

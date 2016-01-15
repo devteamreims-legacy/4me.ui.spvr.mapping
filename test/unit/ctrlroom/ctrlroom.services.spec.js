@@ -19,6 +19,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
       commit: '/cwp' // POST whole control room status
     };
 
+    var backend = {};
 
     var resultsFromBackend = {
       getAll: [
@@ -77,6 +78,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
       ctrlroomManager.getCwp.should.be.a('function');
       ctrlroomManager.refresh.should.be.a('function');
       ctrlroomManager.commit.should.be.a('function');
+      ctrlroomManager.revert.should.be.a('function');
       ctrlroomManager.isLoading.should.be.a('function');
       ctrlroomManager.hasChanges.should.be.a('function');
     });
@@ -86,7 +88,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     });
 
     it('should be able to be bootstrapped', function(done) {
-      $httpBackend
+      backend.getAll = $httpBackend
         .when('GET', api.rootPath + api.cwp.getAll)
         .respond(resultsFromBackend.getAll);
 
@@ -127,7 +129,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
 
     describe('bootstrapped', function() {
       beforeEach(function() {
-        $httpBackend
+        backend.getAll = $httpBackend
           .when('GET', api.rootPath + api.cwp.getAll)
           .respond(resultsFromBackend.getAll);
 
@@ -282,6 +284,51 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.commit()
           .then(function() {
             ctrlroomManager.refresh.should.have.been.called;
+            done();
+          });
+
+          $httpBackend.flush();
+        });
+
+        it('should actually refresh stuff', function(done) {
+          ctrlroomManager.addSectors(22, ['UF']);
+          var changedResults = [
+            {
+              id: 20,
+              name: "P20",
+              disabled: false,
+              sectors: [
+                "KD",
+                "KF"
+              ],
+              sectorName: "KDF"
+            },
+            {
+              id: 21,
+              name: "P21",
+              disabled: false,
+              sectors: [
+                "HH",
+                "KH",
+                "UH",
+                "XH"
+              ],
+              sectorName: "4H"
+            },
+            {
+              id: 22,
+              name: "P22",
+              disabled: false,
+              sectors: ["UF"],
+              sectorName: "UF"
+            }
+          ];
+          backend.getAll
+            .respond(changedResults);
+
+          ctrlroomManager.commit()
+          .then(function() {
+            ctrlroomManager.getCwp(22).sectors.should.eql(['UF']);
             done();
           });
 

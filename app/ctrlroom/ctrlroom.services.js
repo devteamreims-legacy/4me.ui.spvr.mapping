@@ -61,7 +61,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       // We are currently already loading stuff from backend
       return loadingPromise;
     }
-
     loadingPromise = $http({
       method: 'GET',
       url: api.rootPath + api.cwp.getAll

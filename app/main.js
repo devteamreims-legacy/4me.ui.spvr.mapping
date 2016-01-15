@@ -47,6 +47,9 @@ function mappingConfig($stateProvider) {
     resolve: {
       ctrlroom: ['ctrlroomManager', function(ctrlroomManager) {
         return ctrlroomManager.bootstrap();
+      }],
+      treeSectors: ['treeSectors', function(treeSectors) {
+        return treeSectors.bootstrap();
       }]
     }
   });

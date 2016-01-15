@@ -152,9 +152,8 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
     if(_.isEmpty(beforeChanges)) { // This is the first change before commit/revert
       beforeChanges = _.cloneDeep(cwps);
-    } else { // We already have a beforeChanges saved, revert point is already set, do nothing
+    } // Otherwise, we already have a beforeChanges saved, revert point is already set, do nothing
 
-    }
 
     /* Remove sectors from other sectors */
     /* BEHOLD THE NESTED LOOP HELL */

@@ -131,6 +131,10 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           .when('GET', api.rootPath + api.cwp.getAll)
           .respond(resultsFromBackend.getAll);
 
+        $httpBackend
+          .when('POST', api.rootPath + api.cwp.commit)
+          .respond(resultsFromBackend.getAll);
+
         ctrlroomManager.bootstrap()
           .should.be.fulfilled;
 
@@ -263,17 +267,25 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
             ctrlroomManager.hasChanges().should.eql(false);
             done();
           });
-          $rootScope.$digest();
+          $httpBackend.flush();
         });
       });
 
       describe('commit', function() {
-        beforeEach(function() {
-
+        it('should succeed', function() {
+          ctrlroomManager.commit().should.be.fulfilled;
+          $httpBackend.flush();
         });
 
-        it('should fail', function() {
-          ctrlroomManager.commit().should.be.fulfilled;
+        it('should call refresh from backend', function(done) {
+          ctrlroomManager.refresh = sinon.stub().returns($q.resolve(true));
+          ctrlroomManager.commit()
+          .then(function() {
+            ctrlroomManager.refresh.should.have.been.called;
+            done();
+          });
+
+          $httpBackend.flush();
         });
       });
     });

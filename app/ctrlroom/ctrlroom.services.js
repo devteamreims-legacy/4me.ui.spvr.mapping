@@ -32,6 +32,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
   var cdsBackendUrl = 'http://localhost:3000';
   var loadingPromise;
+  var commitPromise;
 
   function _createCwp(cwpId) {
     return {
@@ -194,20 +195,37 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   }
 
   function commit() {
+    var self = this;
+    if(commitPromise !== undefined) {
+      console.log('Already commiting');
+      // We are currently already loading stuff from backend
+      return commitPromise;
+    }
+
+    properties.loading = true;
+
     /* Send http post request*/
-
+    commitPromise = $http.post(
+      api.rootPath + api.cwp.commit,
+      cwps
+    )
     /* On failure, raise an error */
-
-
+    .catch(function(err) {
+      errors.add('warning', 'Could not post data from backend', err);
+      properties.loading = false;
+      commitPromise = undefined;
+      return $q.reject(err);
+    })
     /* On success, refresh data from backend */
-
-    _.each(cwps, function(c) {
-      c.changed = false;
+    .then(self.refresh)
+    /* Then remove commitPromise */
+    .then(function(res) {
+      commitPromise = undefined;
+      properties.loading = false;
+      return;
     });
-
-    beforeChanges = [];
-
-    return $q.resolve('Committed changes');
+    
+    return commitPromise;
   }
 
   // API

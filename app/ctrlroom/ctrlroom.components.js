@@ -83,8 +83,8 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager) {
 
 }
 
-cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog'];
-function cwpDialogController(_, ctrlroomManager, $mdDialog) {
+cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog', 'treeSectors'];
+function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
   var cwpDialog = this;
   cwpDialog.cwp = ctrlroomManager.getCwp(cwpDialog.cwpId);
 
@@ -135,48 +135,40 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog) {
     console.log('Called with');
     console.log(s);
     return;
-  }
-
-  cwpDialog.setSectorsFromString = function() {
-    // Get sectors from string
-    return treeSectors.getFromString(s)
-    // Filter and assign to selectedSectors
-    .then(function(sectors) {
-      var filtered = _.without(sectors, 'YR');
-      vm.selectedSectors = filtered;
-      return vm.selectedSectors;
-    })
-    // Recompute sector string
-    .then(function(selectedSectors) {
-      return vm.position.computeSectorString(_.union(selectedSectors, vm.position.sectors));
-    })
-    // Assign to vm.newSectorString
-    .then(function(str) {
-      vm.newSectorString = str;
-    });
   };
 
-  cwpDialog.toggleSectorsFromString = function(s) {
+  cwpDialog.toggleSectorsFromString = function(str) {
+    // TODO : Handle the case about some sectors are selected, others aren't
     // Lookup string in treeSectors
-    return treeSectors.getFromString(s)
-    .then(function(sectors) {
-      _.each(_.without(sectors, 'YR'), function(s) {
-        vm.toggleSector(s)
-      });
+    var sectorGroup = treeSectors.getFromString(str);
+    if(_.isEmpty(sectorGroup)) {
+      console.log('This should never happen');
+      return;
+    }
+    _.each(sectorGroup.elementarySectors, function(s) {
+      cwpDialog.toggleSector(s);
     });
   };
 
   cwpDialog.toggleSector = function(s) {
-    console.log('Called !');
-    console.log(s);
+    /*
+     * YR has a special status
+     * For now, this sector exists but can't be unbound from HR
+     * Therefore, we won't compute anything if YR is added
+     * We'll just assume its status is bound to HR
+     */
+
+    if(s === 'YR') {
+      return;
+    }
     if(_.indexOf(cwpDialog.selectedSectors, s) !== -1) { // Already selected sector, remove it
-      if(s === 'HR' || s === 'YR') {
+      if(s === 'HR') {
         cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, 'HR', 'YR');
       } else {
         cwpDialog.selectedSectors = _.without(cwpDialog.selectedSectors, s);
       }
     } else {
-      if(s === 'HR' || s === 'YR') {
+      if(s === 'HR') {
         cwpDialog.selectedSectors.push('HR');
         cwpDialog.selectedSectors.push('YR');
       } else {

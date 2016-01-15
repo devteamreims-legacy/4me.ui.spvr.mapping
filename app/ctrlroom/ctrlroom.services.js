@@ -77,6 +77,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
         cwp.name = c.name;
         cwp.sectors = c.sectors;
         cwp.sectorName = c.sectorName;
+        cwp.changed = false;
       });
 
       beforeChanges = []; // Reset before changes when data is loaded

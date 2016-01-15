@@ -336,6 +336,7 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
         });
 
         describe('failure', function() {
+
           beforeEach(function() {
             backend.commit.respond(404, '');
           });
@@ -355,7 +356,6 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
             $httpBackend.flush();
           });
         });
-
 
       });
     });

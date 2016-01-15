@@ -149,6 +149,18 @@ function mappingController(errors, notifications, $state, ctrlroomManager) {
     return ctrlroomManager.isLoading();
   };
 
+  mapping.hasChanges = function() {
+    return ctrlroomManager.hasChanges();
+  };
+
+  mapping.revert = function() {
+    return ctrlroomManager.revert();
+  };
+
+  mapping.commit = function() {
+    return ctrlroomManager.commit();
+  };
+
 }
 
 }());

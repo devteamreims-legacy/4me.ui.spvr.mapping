@@ -4,11 +4,11 @@
   class="md-warn"
   md-mode="query">
 </md-progress-linear>
-<div layout-padding class="ctrlroom-actions" layout="row">
-  <md-button>
+<div layout-padding ng-if="mapping.hasChanges()" class="ctrlroom-actions" layout="row">
+  <md-button ng-click="mapping.commit()" class="md-raised">
     CONFIRMER
   </md-button>
-  <md-button>
+  <md-button ng-click="mapping.revert()" class="md-raised">
     ANNULER
   </md-button>
 </div>

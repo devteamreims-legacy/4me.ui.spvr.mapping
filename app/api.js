@@ -16,7 +16,8 @@ angular.module('4me.ui.spvr.mapping.api', [])
   cwp: {
     getAll: '/cwp',
     getSingle: '/cwp/', // + cwpId
-    commit: '/cwp' // POST
+    commit: '/cwp', // POST
+    suggest: function(cwpId) { return '/cwp/' + cwpId + '/sectors/suggest'; }
   }
 });
 

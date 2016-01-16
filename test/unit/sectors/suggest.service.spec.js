@@ -57,7 +57,7 @@ describe('4me.ui.spvr.mapping.sectors.services', function() {
         status = _status_;
         api = _api_;
 
-        endpoints.suggest = api.cwp.suggest(cwpId);
+        endpoints.suggest = api.rootPath + api.cwp.suggest(cwpId);
       }
     ]));
 

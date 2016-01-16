@@ -29,17 +29,26 @@ dialogComponents.component('fmeMapSectorSuggest', {
   templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/suggest.tpl.html'
 });
 
-sectorSuggestController.$inject = ['_'];
-function sectorSuggestController(_) {
+sectorSuggestController.$inject = ['_', 'sectorSuggestion'];
+function sectorSuggestController(_, sectorSuggestion) {
   var sectorSuggest = this;
 
-  sectorSuggest.suggestedSectors = ['4N'];
+  sectorSuggest.suggestedSectors = [];
   sectorSuggest.loading = true;
 
-  sectorSuggest.click = function(sectors) {
-    return sectorSuggest.clickCallback({sectorString: sectors});
-  }
-
+  sectorSuggest.click = function(sectorName) {
+    return sectorSuggest.clickCallback({sectorString: sectorName});
+  };
+  sectorSuggestion.get(sectorSuggest.cwpId)
+    .then(function(suggestions) {
+      _.each(suggestions, function(s) {
+        sectorSuggest.suggestedSectors.push(s.name);
+      });
+      sectorSuggest.loading = false;
+    })
+    .catch(function(err) {
+      sectorSuggest.loading = false;
+    });
 }
 
 // <fme-map-urme-sectors>

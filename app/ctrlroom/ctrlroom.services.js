@@ -16,7 +16,7 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
   '4me.core.sectors.services',
   '4me.ui.spvr.mapping.errors',
   '4me.ui.spvr.mapping.api',
-  '4me.ui.spvr.mapping.status',
+  '4me.ui.spvr.mapping.status'
 ])
 .factory('ctrlroomManager', ctrlroomManager);
 

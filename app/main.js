@@ -143,8 +143,6 @@ mappingController.$inject = ['mapping.errors', 'mapping.notifications', '$state'
 function mappingController(errors, notifications, $state, ctrlroomManager) {
   var mapping = this;
 
-  mapping.initialLoading = false;
-
   mapping.isLoading = function() {
     return ctrlroomManager.isLoading();
   };

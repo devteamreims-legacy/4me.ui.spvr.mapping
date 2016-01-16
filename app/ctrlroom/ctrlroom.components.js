@@ -102,7 +102,9 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
 
   cwpDialog.confirm = function() {
     // We need to add selectedSectors to our position
-    ctrlroomManager.addSectors(cwpDialog.cwp.id, cwpDialog.selectedSectors);
+    if(!_.isEmpty(cwpDialog.selectedSectors)) {
+      ctrlroomManager.addSectors(cwpDialog.cwp.id, cwpDialog.selectedSectors);
+    }
     $mdDialog.hide();
   };
 

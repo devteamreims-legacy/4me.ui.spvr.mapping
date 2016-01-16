@@ -35,10 +35,6 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager) {
   cwpButton.cwp = ctrlroomManager.getCwp(cwpButton.cwpId);
 
   cwpButton.getClass = function() {
-    if(ctrlroomManager.isLoading() === true) {
-      // No class when loading
-      return '';
-    }
     if(cwpButton.cwp.disabled === true) {
       return '';
     } else {

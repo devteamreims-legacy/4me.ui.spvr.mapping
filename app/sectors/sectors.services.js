@@ -33,18 +33,19 @@ function sectorSuggestion(_, $http, $q, api, errors) {
     if(suggestPromises[id]) {
       return suggestPromises[id];
     }
-    suggestPromises[id] = $http.get(api.rootPath + api.cwp.suggest(id))
+    suggestPromises[id] = $http.get(api.rootPath + api.cwp.suggest(id), {cache: false})
       .then(function(res) {
         var r = [];
         _.each(res.data, function(s) {
           r.push({
-            name: s.name,
-            elementarySectors: s.elementarySectors
+            name: s.name
           });
         });
+        suggestPromises[id] = undefined;
         return r;
       })
       .catch(function(err) {
+        suggestPromises[id] = undefined;
         errors.add('warning', 'Could not load sector suggestions for cwp ' + id, err);
         return $q.reject(err);
       });

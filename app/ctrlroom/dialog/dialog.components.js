@@ -52,17 +52,22 @@ function sectorSuggestController(_, sectorSuggestion) {
 }
 
 // <fme-map-urme-sectors>
-dialogComponents.component('fmeMapUrmeSectors', {
-  restrict: 'E',
-  isolate: false,
-  templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urme.tpl.html'
+dialogComponents.directive('fmeMapUrmeSectors', function() {
+  return {
+    restrict: 'E',
+    scope: true,
+    templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urme.tpl.html'
+  };
 });
 
 // <fme-map-urme-sectors>
-dialogComponents.component('fmeMapUrmnSectors', {
-  restrict: 'E',
-  isolate: false,
-  templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urmn.tpl.html'
+dialogComponents.directive('fmeMapUrmnSectors', function() {
+  return {
+    restrict: 'E',
+    // TODO : Angular decided to break the possibility to have a non isolated scope
+    scope: true,
+    templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urmn.tpl.html'
+  };
 });
 
 }());

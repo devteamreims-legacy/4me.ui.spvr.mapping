@@ -119,7 +119,7 @@ describe('4me.ui.spvr.mapping.sectors.services', function() {
           sectorSuggestion.get(cwpId)
           .then(function(suggestions) {
             suggestions.length.should.eql(3);
-            suggestions[0].should.have.keys('name');
+            suggestions[0].should.have.keys('name', 'elementarySectors');
             done();
           })
           .catch(function(err) {

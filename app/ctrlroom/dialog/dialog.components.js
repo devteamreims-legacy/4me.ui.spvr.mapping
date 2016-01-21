@@ -36,13 +36,14 @@ function sectorSuggestController(_, sectorSuggestion) {
   sectorSuggest.suggestedSectors = [];
   sectorSuggest.loading = true;
 
-  sectorSuggest.click = function(sectorName) {
-    return sectorSuggest.clickCallback({sectorString: sectorName});
+  sectorSuggest.click = function(sectorName, elementarySectors) {
+    return sectorSuggest.clickCallback({sectorString: sectorName, elementarySectors: elementarySectors});
   };
   sectorSuggestion.get(sectorSuggest.cwpId)
     .then(function(suggestions) {
       _.each(suggestions, function(s) {
-        sectorSuggest.suggestedSectors.push(s.name);
+        console.log(s);
+        sectorSuggest.suggestedSectors.push(s);
       });
       sectorSuggest.loading = false;
     })

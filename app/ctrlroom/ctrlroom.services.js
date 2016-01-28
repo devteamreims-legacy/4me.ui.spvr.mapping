@@ -61,13 +61,24 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       // We are currently already loading stuff from backend
       return loadingPromise;
     }
-    loadingPromise = $http({
-      method: 'GET',
-      url: api.rootPath + api.cwp.getAll
-    })
+    loadingPromise = $q.all([
+      $http.get(api.rootPath + api.cwp.getAll),
+      $http.get(api.rootPath + api.mapping.getMap)
+    ])
     .then(function(res) {
-      $log.debug('Got cwp from backend !');
-      _.each(res.data, function(c) {
+      $log.debug('Got cwp and mapping from backend !');
+      var cwpRes = res[0];
+      var mappingRes = res[1];
+
+      $log.debug(cwpRes);
+      $log.debug(mappingRes);
+
+      // First, process all CWPs
+      _.each(cwpRes.data, function(c) {
+        // Filter out supervisor / flow-manager
+        if(c.type !== 'cwp') {
+          return true;
+        }
         var cwp = getCwp(parseInt(c.id));
         if(_.isEmpty(cwp)) {
           cwp = _createCwp(parseInt(c.id));
@@ -75,20 +86,29 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
         }
         cwp.disabled = c.disabled;
         cwp.name = c.name;
-        cwp.sectors = c.sectors;
-        cwp.sectorName = c.sectorName;
         cwp.changed = false;
+      });
+
+      // Then bind sectors
+
+      _.each(mappingRes.data, function(m) {
+        var cwp = getCwp(parseInt(m.cwpId));
+        if(!cwp) {
+          throw new Error('We have an unknown Cwp in mapping results !');
+        }
+        cwp.sectors = m.sectors;
       });
 
       beforeChanges = []; // Reset before changes when data is loaded
 
       properties.loading = false;
       loadingPromise = undefined;
+      console.log(cwps);
       return cwps;
     })
     .catch(function(err) {
-      errors.add('critical', 'Could not load data from backend', err);
-      status.escalate('ctrlroomManager', 'critical', 'Could not load data from backend', err);
+      errors.add('critical', 'Could not load mapping data from backend', err);
+      status.escalate('ctrlroomManager', 'critical', 'Could not load mapping data from backend', err);
       properties.loading = false;
       loadingPromise = undefined;
       return $q.reject(err);
@@ -119,7 +139,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
   function addSectors(cwpId, sectors) {
     if(!cwpId || !sectors) {
-      throw new Error('Argument error');
+      throw new Error('ctrlroomManager.addSectors : Argument error');
     }
 
     var cwp = getCwp(cwpId);
@@ -148,8 +168,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     }
 
     /* Copy cwps to beforeChanges to provide a possible reversion */
-    /* TODO : This won't work with multiple consecutive changes performed */
-    //beforeChanges = _.cloneDeep(cwps);
 
     if(_.isEmpty(beforeChanges)) { // This is the first change before commit/revert
       beforeChanges = _.cloneDeep(cwps);
@@ -173,18 +191,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     cwp.sectors = _.union(sectors, cwp.sectors);
     cwp.changed = true;
 
-    /* Recompute name for each 'changed' CWP */
-    _.each(_.filter(cwps, {changed: true}), function(c) {
-      var s = treeSectors.getFromSectors(c.sectors);
-      var name;
-      if(s.name === undefined) {
-        name = c.sectors.join(',');
-      } else {
-        name = s.name;
-      }
-      c.sectorName = name;
-    });
-
     /* And return our CWP */
     return cwp;
 
@@ -204,10 +210,17 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
     properties.loading = true;
 
+    var preparedData = _.map(cwps, function(c) {
+      return {cwpId: c.id, sectors: c.sectors};
+    });
+
+    $log.debug('Sending data to mapping backend');
+    $log.debug(preparedData);
+
     /* Send http post request*/
     commitPromise = $http.post(
-      api.rootPath + api.cwp.commit,
-      cwps
+      api.rootPath + api.mapping.commit,
+      preparedData
     )
     /* On failure, raise an error */
     .catch(function(err) {
@@ -224,7 +237,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       properties.loading = false;
       return;
     });
-    
+
     return commitPromise;
   }
 

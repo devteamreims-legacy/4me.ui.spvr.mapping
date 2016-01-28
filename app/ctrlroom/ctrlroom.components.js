@@ -62,7 +62,6 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager) {
     if(cwpButton.cwp.disabled === true) {
       return;
     }
-    /* Filter out disabled positions */
     $mdDialog.show({
       controller: cwpDialogController,
       controllerAs: 'cwpDialog',

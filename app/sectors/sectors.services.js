@@ -33,7 +33,7 @@ function sectorSuggestion(_, $http, $q, api, errors) {
     if(suggestPromises[id]) {
       return suggestPromises[id];
     }
-    suggestPromises[id] = $http.get(api.rootPath + api.cwp.suggest(id), {cache: false})
+    suggestPromises[id] = $http.get(api.rootPath + api.mapping.suggest(id), {cache: false})
       .then(function(res) {
         var r = [];
         _.each(res.data, function(s) {

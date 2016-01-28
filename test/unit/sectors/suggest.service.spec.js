@@ -22,22 +22,19 @@ describe('4me.ui.spvr.mapping.sectors.services', function() {
     var resultsFromBackend = {
       suggest: [
         {
-          name: "UBN",
-          elementarySectors: [
+          sectors: [
             "UN",
             "KB"
           ]
         },
         {
-          name: "UXR",
-          elementarySectors: [
+          sectors: [
             "UR",
             "XR"
           ]
         },
         {
-          name: "KHR",
-          elementarySectors: [
+          sectors: [
             "KR",
             "YR",
             "HR"
@@ -57,7 +54,7 @@ describe('4me.ui.spvr.mapping.sectors.services', function() {
         status = _status_;
         api = _api_;
 
-        endpoints.suggest = api.rootPath + api.cwp.suggest(cwpId);
+        endpoints.suggest = api.rootPath + api.mapping.suggest(cwpId);
       }
     ]));
 

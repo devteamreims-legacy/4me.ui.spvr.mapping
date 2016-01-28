@@ -30,7 +30,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
   var beforeChanges = [];
 
-  var cdsBackendUrl = 'http://localhost:3000';
   var loadingPromise;
   var commitPromise;
 
@@ -57,12 +56,13 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   function _getFromBackend() {
     properties.loading = true;
     if(loadingPromise !== undefined) {
-      console.log('Already loading');
+      $log.debug('ctrlroomManager: Already loading !');
       // We are currently already loading stuff from backend
       return loadingPromise;
     }
     loadingPromise = $q.all([
-      $http.get(api.rootPath + api.cwp.getAll),
+      // Filter out supervisor & flow-manager CWPs with type=cwp param
+      $http.get(api.rootPath + api.cwp.getAll, {params: {type: 'cwp'}}),
       $http.get(api.rootPath + api.mapping.getMap)
     ])
     .then(function(res) {
@@ -75,10 +75,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
       // First, process all CWPs
       _.each(cwpRes.data, function(c) {
-        // Filter out supervisor / flow-manager
-        if(c.type !== 'cwp') {
-          return true;
-        }
         var cwp = getCwp(parseInt(c.id));
         if(_.isEmpty(cwp)) {
           cwp = _createCwp(parseInt(c.id));
@@ -103,7 +99,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
       properties.loading = false;
       loadingPromise = undefined;
-      console.log(cwps);
       return cwps;
     })
     .catch(function(err) {

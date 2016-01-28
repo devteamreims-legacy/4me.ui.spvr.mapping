@@ -11,27 +11,32 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     var api;
     var treeSectors;
 
-    var cdsBackendUrl = 'http://localhost:3000';
-
-    var apiEndpoints = {
-      getAll: cdsBackendUrl + '/cwp',
-      getSingle: cdsBackendUrl + '/cwp/', // + positionId
-      commit: '/cwp' // POST whole control room status
-    };
-
     var backend = {};
 
+    // Our service has these 2 requests :
+    /*
+      $http.get(api.rootPath + api.cwp.getAll, {params: {type: 'cwp'}}),
+      $http.get(api.rootPath + api.mapping.getMap)
+    */
+
     var resultsFromBackend = {
+      getMap: [
+        {
+          cwpId: 20,
+          sectors: ['KD', 'UF', 'KF']
+        }, {
+          cwpId: 21,
+          sectors: ['UH', 'XH', 'KH', 'HH']
+        }, {
+          cwpId: 22,
+          sectors: []
+        }
+      ],
       getAll: [
         {
           id: 20,
           name: "P20",
           disabled: false,
-          sectors: [
-            "KD",
-            "KF",
-            "UF"
-          ],
           sectorName: "KD2F"
         },
         {
@@ -89,8 +94,12 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
 
     it('should be able to be bootstrapped', function(done) {
       backend.getAll = $httpBackend
-        .when('GET', api.rootPath + api.cwp.getAll)
+        .whenGET(api.rootPath + api.cwp.getAll + '?type=cwp')
         .respond(resultsFromBackend.getAll);
+
+      backend.getMap = $httpBackend
+        .when('GET', api.rootPath + api.mapping.getMap)
+        .respond(resultsFromBackend.getMap);
 
       ctrlroomManager.bootstrap()
         .should.be.fulfilled
@@ -102,7 +111,11 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     describe('without backend', function() {
       beforeEach(function() {
         $httpBackend
-          .when('GET', api.rootPath + api.cwp.getAll)
+          .when('GET', api.rootPath + api.cwp.getAll + '?type=cwp')
+          .respond(404, '');
+
+        $httpBackend
+          .when('GET', api.rootPath + api.mapping.getMap)
           .respond(404, '');
 
         status.escalate = sinon.stub();
@@ -130,11 +143,15 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
     describe('bootstrapped', function() {
       beforeEach(function() {
         backend.getAll = $httpBackend
-          .when('GET', api.rootPath + api.cwp.getAll)
+          .whenGET(api.rootPath + api.cwp.getAll + '?type=cwp')
           .respond(resultsFromBackend.getAll);
 
+        backend.getMap = $httpBackend
+          .when('GET', api.rootPath + api.mapping.getMap)
+          .respond(resultsFromBackend.getMap);
+
         backend.commit = $httpBackend
-          .when('POST', api.rootPath + api.cwp.commit)
+          .when('POST', api.rootPath + api.mapping.commit)
           .respond(resultsFromBackend.getAll);
 
         ctrlroomManager.bootstrap()
@@ -201,20 +218,6 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.getCwp(22).changed.should.eql(true);
           ctrlroomManager.getCwp(21).changed.should.eql(true);
           ctrlroomManager.getCwp(20).changed.should.eql(false);
-        });
-
-        it('should recompute sector string on all concerned cwps', function() {
-          ctrlroomManager.addSectors(22, ['UF']);
-          treeSectors.getFromSectors.should.have.been.calledWith(['UF']);
-          treeSectors.getFromSectors.should.have.been.calledWith(['KD', 'KF']);
-          ctrlroomManager.getCwp(22).sectorName.should.eql('UXH');
-          ctrlroomManager.getCwp(20).sectorName.should.eql('UXH');
-        });
-
-        it('should provide some kind of string even when treeSectors failed to do so', function() {
-          treeSectors.getFromSectors = sinon.stub().returns({});
-          ctrlroomManager.addSectors(22, ['UF', 'KF']);
-          ctrlroomManager.getCwp(22).sectorName.should.eql('KF,UF');
         });
       });
 
@@ -294,36 +297,27 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
           ctrlroomManager.addSectors(22, ['UF']);
           var changedResults = [
             {
-              id: 20,
-              name: "P20",
-              disabled: false,
+              cwpId: 20,
               sectors: [
                 "KD",
                 "KF"
-              ],
-              sectorName: "KDF"
+              ]
             },
             {
-              id: 21,
-              name: "P21",
-              disabled: false,
+              cwpId: 21,
               sectors: [
                 "HH",
                 "KH",
                 "UH",
                 "XH"
-              ],
-              sectorName: "4H"
+              ]
             },
             {
-              id: 22,
-              name: "P22",
-              disabled: false,
-              sectors: ["UF"],
-              sectorName: "UF"
+              cwpId: 22,
+              sectors: ["UF"]
             }
           ];
-          backend.getAll
+          backend.getMap
             .respond(changedResults);
 
           ctrlroomManager.commit()

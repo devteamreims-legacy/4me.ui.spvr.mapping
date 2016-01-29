@@ -36,9 +36,10 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   var commitPromise;
 
   function _createCwp(cwpId) {
+    $log.debug('ctrlroomManager: creating CWP ('+ cwpId + ')');
     return {
       id: cwpId,
-      name: 'P' + cwpId,
+      name: '' + cwpId,
       disabled: false,
       sectors: [],
       sectorName: '',
@@ -71,9 +72,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       $log.debug('Got cwp and mapping from backend !');
       var cwpRes = res[0];
       var mappingRes = res[1];
-
-      $log.debug(cwpRes);
-      $log.debug(mappingRes);
 
       // First, process all CWPs
       _.each(cwpRes.data, function(c) {

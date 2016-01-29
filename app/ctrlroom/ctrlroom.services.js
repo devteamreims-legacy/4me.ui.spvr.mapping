@@ -135,7 +135,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
   function addSectors(cwpId, sectors) {
     if(!cwpId || !sectors) {
-      throw new Error('ctrlroomManager.addSectors : Argument error');
+      throw new Error('ctrlroomManager.addSectors: Argument error');
     }
 
     var cwp = getCwp(cwpId);
@@ -198,7 +198,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   function commit() {
     var self = this;
     if(commitPromise !== undefined) {
-      console.log('Already commiting');
+      $log.debug('spvr-mapping.ctrlroomManager: Already commiting');
       // We are currently already loading stuff from backend
       return commitPromise;
     }
@@ -209,7 +209,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       return {cwpId: c.id, sectors: c.sectors};
     });
 
-    $log.debug('Sending data to mapping backend');
+    $log.debug('spvr-mapping.ctrlroomManager: Sending data to mapping backend');
     $log.debug(preparedData);
 
     /* Send http post request*/

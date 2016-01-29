@@ -36,8 +36,8 @@ function sectorSuggestController(_, sectorSuggestion) {
   sectorSuggest.suggestedSectors = [];
   sectorSuggest.loading = true;
 
-  sectorSuggest.click = function(sectorName, elementarySectors) {
-    return sectorSuggest.clickCallback({sectorString: sectorName, elementarySectors: elementarySectors});
+  sectorSuggest.click = function(sectors) {
+    return sectorSuggest.clickCallback({sectors: sectors});
   };
   sectorSuggestion.get(sectorSuggest.cwpId)
     .then(function(suggestions) {

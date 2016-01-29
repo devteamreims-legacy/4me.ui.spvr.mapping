@@ -38,8 +38,7 @@ function sectorSuggestion(_, $http, $q, api, errors) {
         var r = [];
         _.each(res.data, function(s) {
           r.push({
-            name: s.name,
-            elementarySectors: s.elementarySectors
+            sectors: s.sectors
           });
         });
         suggestPromises[id] = undefined;

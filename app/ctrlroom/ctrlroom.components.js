@@ -128,8 +128,8 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
     return s === 'YR' || _.contains(cwpDialog.cwp.sectors, s);
   };
 
-  cwpDialog.fromSuggestion = function(str) {
-    var sectorGroup = treeSectors.getFromString(str);
+  cwpDialog.fromSuggestion = function(sectors) {
+    var sectorGroup = treeSectors.getFromSectors(sectors);
     if(_.isEmpty(sectorGroup)) {
       console.log('This should never happen');
       return;

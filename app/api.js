@@ -15,7 +15,7 @@ angular.module('4me.ui.spvr.mapping.api', [])
   rootPath: 'http://localhost:3000',
   mapping: {
     getMap: '/mapping',
-    suggest: function(cwpId) { return '/mapping/' + cwpId + '/suggest'; },
+    suggest: function(cwpId) { return '/mapping/cwp/' + cwpId + '/suggest'; },
     commit: '/mapping' // POST
   },
   cwp: {

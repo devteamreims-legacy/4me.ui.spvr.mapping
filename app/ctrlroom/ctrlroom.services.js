@@ -36,7 +36,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   var commitPromise;
 
   function _createCwp(cwpId) {
-    $log.debug('ctrlroomManager: creating CWP ('+ cwpId + ')');
     return {
       id: cwpId,
       name: '' + cwpId,
@@ -63,13 +62,14 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       // We are currently already loading stuff from backend
       return loadingPromise;
     }
+    $log.debug('spvr-mapping.ctrlroomManager: Loading CWP and Map data from backend');
     loadingPromise = $q.all([
       // Filter out supervisor & flow-manager CWPs with type=cwp param
       $http.get(api.rootPath + api.cwp.getAll, {params: {type: 'cwp'}}),
       $http.get(api.rootPath + api.mapping.getMap)
     ])
     .then(function(res) {
-      $log.debug('Got cwp and mapping from backend !');
+      $log.debug('spvr-mapping.ctrlroomManager: Got CWP and Map data from backend');
       var cwpRes = res[0];
       var mappingRes = res[1];
 
@@ -83,10 +83,12 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
         cwp.disabled = c.disabled;
         cwp.name = c.name;
         cwp.changed = false;
+        // We must remove sectors bound here
+        // We will rebind them later
+        cwp.sectors = [];
       });
 
       // Then bind sectors
-
       _.each(mappingRes.data, function(m) {
         var cwp = getCwp(parseInt(m.cwpId));
         if(!cwp) {
@@ -100,9 +102,13 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       properties.loading = false;
       loadingPromise = undefined;
       bootstrapped = true;
+      status.recover('ctrlroomManager');
+
+      $log.debug('spvr-mapping.ctrlroomManager: Sucessfully processed data from backend');
       return cwps;
     })
     .catch(function(err) {
+      $log.debug('spvr-mapping.ctrlroomManager: Error loading');
       errors.add('critical', 'Could not load mapping data from backend', err);
       status.escalate('ctrlroomManager', 'critical', 'Could not load mapping data from backend', err);
       properties.loading = false;
@@ -115,12 +121,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   }
 
   function revert() {
-    /* This fucks up angular dirty checking, we need to preserve references here */
-    /*
-    if(!_.isEmpty(beforeChanges)) {
-      cwps = _.clone(beforeChanges);
-    }
-    */
     if(!_.isEmpty(beforeChanges)) {
       _.each(cwps, function(c) {
         if(c.changed === false) {
@@ -180,7 +180,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
       });
       oldCwp.changed = true;
       oldCwp.sectors = _.without(oldCwp.sectors, s);
-      // We could recompute here, but chances are we will be pulling more sectors from this cwp
     });
 
     /* Put sectors in our CWP */

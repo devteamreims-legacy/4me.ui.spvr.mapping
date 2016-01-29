@@ -28,6 +28,8 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     loading: true
   };
 
+  var bootstrapped = false;
+
   var beforeChanges = [];
 
   var loadingPromise;
@@ -99,6 +101,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
 
       properties.loading = false;
       loadingPromise = undefined;
+      bootstrapped = true;
       return cwps;
     })
     .catch(function(err) {
@@ -236,8 +239,17 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     return commitPromise;
   }
 
+  function bootstrap() {
+    if(bootstrapped === true) {
+      return $q.resolve(cwps);
+    } else {
+      $log.debug('spvr-mapping.ctrlroomManager: Bootstrapping');
+      return refreshFromBackend();
+    }
+  }
+  
   // API
-  service.bootstrap = refreshFromBackend;
+  service.bootstrap = bootstrap;
   service.getCwp = getCwp;
   service.refresh = refreshFromBackend;
   service.refreshFromBackend = refreshFromBackend;

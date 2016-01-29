@@ -108,6 +108,28 @@ describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
       $httpBackend.flush();
     });
 
+    it('should be able to be bootstrapped only once', function(done) {
+      $httpBackend
+        .expectGET(api.rootPath + api.cwp.getAll + '?type=cwp')
+        .respond(resultsFromBackend.getAll);
+
+      $httpBackend
+        .expectGET(api.rootPath + api.mapping.getMap)
+        .respond(resultsFromBackend.getMap);
+
+      ctrlroomManager.bootstrap()
+        .then(function(cwps) {
+          ctrlroomManager.bootstrap()
+            .should.be.fulfilled
+            .and.eventually.eql(cwps)
+            .and.notify(done);
+        });
+
+      $httpBackend.flush();
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
     describe('without backend', function() {
       beforeEach(function() {
         $httpBackend

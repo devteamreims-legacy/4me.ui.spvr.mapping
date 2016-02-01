@@ -21,6 +21,7 @@ var dialogComponents = angular.module('4me.ui.spvr.mapping.ctrlroom.dialog.compo
 dialogComponents.component('fmeMapSectorSuggest', {
   restrict: 'E',
   bindings: {
+    currentSectors: '=',
     cwpId: '@',
     clickCallback: '&'
   },
@@ -34,7 +35,7 @@ function sectorSuggestController(_, sectorSuggestion) {
   var sectorSuggest = this;
 
   sectorSuggest.suggestedSectors = [];
-  sectorSuggest.loading = true;
+  sectorSuggest.isLoading = true;
 
   sectorSuggest.click = function(sectors) {
     return sectorSuggest.clickCallback({sectors: sectors});
@@ -43,7 +44,12 @@ function sectorSuggestController(_, sectorSuggestion) {
   sectorSuggestion.get(sectorSuggest.cwpId)
     .then(function(suggestions) {
       _.each(suggestions, function(s) {
-        sectorSuggest.suggestedSectors.push(s);
+        var fullSuggestion = {};
+        fullSuggestion.sectors = _.union(
+          _.get(s, 'sectors'),
+          sectorSuggest.currentSectors
+        );
+        sectorSuggest.suggestedSectors.push(fullSuggestion);
       });
       sectorSuggest.loading = false;
     })

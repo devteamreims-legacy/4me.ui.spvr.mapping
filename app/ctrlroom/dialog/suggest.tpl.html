@@ -1,9 +1,9 @@
 <h4>Suggestions</h4>
-<md-progress-circular ng-show="sectorSuggest.loading" class="md-warn" md-mode="query"></md-progress-circular>
+<md-progress-linear ng-show="sectorSuggest.isLoading || true" class="md-warn"></md-progress-linear>
 <div layout="row">
   <md-button
     class="md-raised md-primary"
     ng-repeat="s in sectorSuggest.suggestedSectors track by $index"
     ng-click="sectorSuggest.click(s.sectors)"
-  >+{{s.sectors | toSector}}</md-button>
+  >{{s.sectors | toSector}}</md-button>
 </div>

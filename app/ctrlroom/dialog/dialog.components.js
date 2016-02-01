@@ -39,10 +39,10 @@ function sectorSuggestController(_, sectorSuggestion) {
   sectorSuggest.click = function(sectors) {
     return sectorSuggest.clickCallback({sectors: sectors});
   };
+
   sectorSuggestion.get(sectorSuggest.cwpId)
     .then(function(suggestions) {
       _.each(suggestions, function(s) {
-        console.log(s);
         sectorSuggest.suggestedSectors.push(s);
       });
       sectorSuggest.loading = false;

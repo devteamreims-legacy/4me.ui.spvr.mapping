@@ -51,10 +51,10 @@ function sectorSuggestController(_, sectorSuggestion) {
         );
         sectorSuggest.suggestedSectors.push(fullSuggestion);
       });
-      sectorSuggest.loading = false;
+      sectorSuggest.isLoading = false;
     })
     .catch(function(err) {
-      sectorSuggest.loading = false;
+      sectorSuggest.isLoading = false;
     });
 }
 

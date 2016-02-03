@@ -26,28 +26,31 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
 // Save / cancel changes button
 
 
-cwpButtonController.$inject = ['_', '$mdDialog', 'ctrlroomManager'];
-function cwpButtonController(_, $mdDialog, ctrlroomManager) {
+cwpButtonController.$inject = ['_', '$mdDialog', 'ctrlroomManager', '$scope'];
+function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
   var cwpButton = this;
   cwpButton.positionDisabled = true;
   cwpButton.loading = true;
 
   cwpButton.cwp = ctrlroomManager.getCwp(cwpButton.cwpId);
 
-  cwpButton.getClass = function() {
-    if(cwpButton.cwp.disabled === true) {
-      return '';
-    } else {
-      if(cwpButton.cwp.changed === true) {
-        return 'md-warn';
-      }
-      if(_.isEmpty(cwpButton.cwp.sectors)) {
-        return 'md-primary md-hue-3';
-      } else {
-        return 'md-accent';
-      }
-    }
+  cwpButton.classes = {};
+  computeClasses();
+
+  function isWithoutSectors() {
+    return _.isEmpty(cwpButton.cwp.sectors);
   }
+
+  function computeClasses() {
+    _.assign(cwpButton.classes, {
+      'md-warn': !!cwpButton.cwp.changed,
+      'md-primary md-hue-3': isWithoutSectors()
+    });
+  }
+
+  $scope.$watch('cwpButton.cwp.changed', computeClasses);
+  $scope.$watch('cwpButton.cwp.sectors', computeClasses);
+
 
   cwpButton.isLoading = function() {
     if(ctrlroomManager.isLoading() === true) {
@@ -99,6 +102,10 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
     // We need to add selectedSectors to our position
     if(!_.isEmpty(cwpDialog.selectedSectors)) {
       ctrlroomManager.addSectors(cwpDialog.cwp.id, cwpDialog.selectedSectors);
+      return ctrlroomManager.commit()
+        .then(function() {
+          return $mdDialog.hide();
+        })
     }
     $mdDialog.hide();
   };
@@ -186,45 +193,6 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
       cwpDialog.newSectorString = cwpDialog.selectedSectors.join(',');
     }
   }
-}
-
-function ctrlroomConfirmPanel(_, ctrlroomManager) {
-  return {
-    restrict: 'E',
-    templateUrl: 'views/ctrlroom/_confirm.html',
-    controller: ctrlroomConfirmPanelController,
-    controllerAs: 'vm',
-    scope: {}
-  };
-}
-
-ctrlroomConfirmPanelController.$inject = ['_', 'ctrlroomManager'];
-function ctrlroomConfirmPanelController(_, ctrlroomManager) {
-  var vm = this;
-
-  vm.isVisible = function() {
-    if(ctrlroomManager.properties.hasChanges === true) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  vm.isLoading = function() {
-    if(ctrlroomManager.properties.loading === true) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  vm.cancel = function() {
-    return ctrlroomManager.refreshAll();
-  };
-
-  vm.confirm = function() {
-    return ctrlroomManager.commitChanges();
-  };
 }
 
 }());

@@ -1,4 +1,10 @@
-<md-button class="md-fab cwp-button" ng-class="cwpButton.getClass()" ng-disabled="cwpButton.cwp.disabled || cwpButton.isLoading()" aria-label="{{cwpButton.cwp.name}}" ng-click="cwpButton.showDialog()">
+<md-button
+  class="md-fab cwp-button"
+  ng-class="cwpButton.classes"
+  ng-disabled="cwpButton.cwp.disabled || cwpButton.isLoading()"
+  aria-label="{{cwpButton.cwp.name}}"
+  ng-click="cwpButton.showDialog()"
+>
   <span class="position">{{cwpButton.cwp.name}}</span>
   <span class="sector">{{cwpButton.cwp.sectors | toSector}}</span>
 </md-button>

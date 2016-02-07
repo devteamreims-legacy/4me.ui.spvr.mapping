@@ -43,9 +43,9 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
 
   // Angular seems to have a race condition involving ngClass
   // Throttling the call seems to work
-  cwpButton.getClass = _.debounce(function() {
+  cwpButton.getClass = _.throttle(function() {
     return getClassObject();
-  }, 40);
+  }, 100);
 
   function getClassObject() {
     var defaults = {
@@ -54,7 +54,7 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
     };
 
     var ret = _.assign({}, defaults);
-    if(!!cwpButton.cwp.changed) {
+    if(cwpButton.cwp.changed === true) {
       _.assign(ret, defaults, {'md-warn': true});
     } else if(isWithoutSectors()) {
       _.assign(ret, defaults, {'md-primary md-hue-3': true});

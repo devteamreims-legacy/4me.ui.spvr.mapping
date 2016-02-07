@@ -210,7 +210,6 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     });
 
     $log.debug('spvr-mapping.ctrlroomManager: Sending data to mapping backend');
-    $log.debug(preparedData);
 
     /* Send http post request*/
     commitPromise = $http.post(

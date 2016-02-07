@@ -35,22 +35,32 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
   cwpButton.cwp = ctrlroomManager.getCwp(cwpButton.cwpId);
 
   cwpButton.classes = {};
-  computeClasses();
 
   function isWithoutSectors() {
     return _.isEmpty(cwpButton.cwp.sectors);
   }
+  
 
-  function computeClasses() {
-    _.assign(cwpButton.classes, {
-      'md-warn': !!cwpButton.cwp.changed,
-      'md-primary md-hue-3': isWithoutSectors()
-    });
+  // Angular seems to have a race condition involving ngClass
+  // Throttling the call seems to work
+  cwpButton.getClass = _.debounce(function() {
+    return getClassObject();
+  }, 40);
+
+  function getClassObject() {
+    var defaults = {
+      'md-warn': false,
+      'md-primary md-hue-3': false
+    };
+
+    var ret = _.assign({}, defaults);
+    if(!!cwpButton.cwp.changed) {
+      _.assign(ret, defaults, {'md-warn': true});
+    } else if(isWithoutSectors()) {
+      _.assign(ret, defaults, {'md-primary md-hue-3': true});
+    }
+    return ret;
   }
-
-  $scope.$watch('cwpButton.cwp.changed', computeClasses);
-  $scope.$watch('cwpButton.cwp.sectors', computeClasses);
-
 
   cwpButton.isLoading = function() {
     if(ctrlroomManager.isLoading() === true) {
@@ -81,8 +91,8 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
 
 }
 
-cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog', 'treeSectors'];
-function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
+cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog', 'treeSectors', '$log'];
+function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors, $log) {
   var cwpDialog = this;
   cwpDialog.cwp = ctrlroomManager.getCwp(cwpDialog.cwpId);
 
@@ -104,6 +114,11 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors) {
       ctrlroomManager.addSectors(cwpDialog.cwp.id, cwpDialog.selectedSectors);
       return ctrlroomManager.commit()
         .then(function() {
+          return $mdDialog.hide();
+        })
+        .catch(function() {
+          $log.warn('Could not submit ctrlroom Map to backend !');
+          // We need to show some kind of toast here
           return $mdDialog.hide();
         })
     }

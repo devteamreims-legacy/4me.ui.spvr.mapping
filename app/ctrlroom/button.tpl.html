@@ -1,6 +1,6 @@
 <md-button
   class="md-fab cwp-button"
-  ng-class="cwpButton.classes"
+  ng-class="cwpButton.getClass()"
   ng-disabled="cwpButton.cwp.disabled || cwpButton.isLoading()"
   aria-label="{{cwpButton.cwp.name}}"
   ng-click="cwpButton.showDialog()"

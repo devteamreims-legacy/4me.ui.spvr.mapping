@@ -1,5 +1,4 @@
-(function() {
-'use strict';
+import _ from 'lodash';
 
 /**
  * @ngdoc overview
@@ -12,7 +11,6 @@
 
 angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
   '4me.core.config',
-  '4me.core.lodash',
   '4me.core.sectors.services',
   '4me.ui.spvr.mapping.errors',
   '4me.ui.spvr.mapping.api',
@@ -20,8 +18,8 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.services', [
 ])
 .factory('ctrlroomManager', ctrlroomManager);
 
-ctrlroomManager.$inject = ['_', '$http', '$q', '$log', 'mapping.errors', 'mapping.status', 'mapping.api', 'treeSectors'];
-function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
+ctrlroomManager.$inject = ['$http', '$q', '$log', 'mapping.errors', 'mapping.status', 'mapping.api', 'treeSectors'];
+function ctrlroomManager($http, $q, $log, errors, status, api, treeSectors) {
   var service = {};
   var cwps = [];
   var properties = {
@@ -47,7 +45,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   }
 
   function getCwp(cwpId) {
-    var cwp = _.findWhere(cwps, {id: parseInt(cwpId)});
+    var cwp = _.find(cwps, {id: parseInt(cwpId)});
     return cwp || {};
   }
 
@@ -126,7 +124,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
         if(c.changed === false) {
           return;
         }
-        var oldCwp = _.findWhere(beforeChanges, {id: c.id});
+        var oldCwp = _.find(beforeChanges, {id: c.id});
         _.assign(c, oldCwp);
       });
     }
@@ -176,7 +174,7 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
     _.each(sectors, function(s) {
       // Loop through CWPs to find the one holding given sector
       var oldCwp = _.find(cwps, function(c) {
-        return _.contains(c.sectors, s);
+        return _.includes(c.sectors, s);
       });
       oldCwp.changed = true;
       oldCwp.sectors = _.without(oldCwp.sectors, s);
@@ -256,5 +254,3 @@ function ctrlroomManager(_, $http, $q, $log, errors, status, api, treeSectors) {
   service.hasChanges = hasChanges;
   return service;
 }
-
-}());

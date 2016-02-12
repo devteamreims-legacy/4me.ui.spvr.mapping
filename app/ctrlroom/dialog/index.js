@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.ctrlroom.dialog.components
@@ -10,7 +12,6 @@
  */
 
 var dialogComponents = angular.module('4me.ui.spvr.mapping.ctrlroom.dialog.components', [
-  '4me.core.lodash',
   '4me.ui.spvr.mapping.ctrlroom.services'
 ]);
 
@@ -27,8 +28,8 @@ dialogComponents.component('fmeMapSectorSuggest', {
   templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/suggest.tpl.html'
 });
 
-sectorSuggestController.$inject = ['_', 'sectorSuggestion'];
-function sectorSuggestController(_, sectorSuggestion) {
+sectorSuggestController.$inject = ['sectorSuggestion'];
+function sectorSuggestController(sectorSuggestion) {
   var sectorSuggest = this;
 
   sectorSuggest.suggestedSectors = [];
@@ -56,20 +57,18 @@ function sectorSuggestController(_, sectorSuggestion) {
 }
 
 // <fme-map-urme-sectors>
-dialogComponents.directive('fmeMapUrmeSectors', function() {
-  return {
+dialogComponents.directive('fmeMapUrmeSectors', () => ({
     restrict: 'E',
     scope: true,
     templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urme.tpl.html'
-  };
-});
+  })
+);
 
 // <fme-map-urme-sectors>
-dialogComponents.directive('fmeMapUrmnSectors', function() {
-  return {
+dialogComponents.directive('fmeMapUrmnSectors', () => ({
     restrict: 'E',
     // TODO : Angular decided to break the possibility to have a non isolated scope
     scope: true,
     templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urmn.tpl.html'
-  };
-});
+  })
+);

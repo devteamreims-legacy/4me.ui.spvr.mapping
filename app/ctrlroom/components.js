@@ -1,5 +1,7 @@
 import dialog from './dialog/';
 
+import _ from 'lodash';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.ctrlroom.components
@@ -8,7 +10,6 @@ import dialog from './dialog/';
  * Control room components
  **/
 angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
-  '4me.core.lodash',
   'ngMaterial',
   '4me.ui.spvr.mapping.ctrlroom.services',
   '4me.ui.spvr.mapping.sectors.services',
@@ -26,8 +27,8 @@ angular.module('4me.ui.spvr.mapping.ctrlroom.components', [
 // Save / cancel changes button
 
 
-cwpButtonController.$inject = ['_', '$mdDialog', 'ctrlroomManager', '$scope'];
-function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
+cwpButtonController.$inject = ['$mdDialog', 'ctrlroomManager', '$scope'];
+function cwpButtonController($mdDialog, ctrlroomManager, $scope) {
   var cwpButton = this;
   cwpButton.positionDisabled = true;
   cwpButton.loading = true;
@@ -91,8 +92,8 @@ function cwpButtonController(_, $mdDialog, ctrlroomManager, $scope) {
 
 }
 
-cwpDialogController.$inject = ['_', 'ctrlroomManager', '$mdDialog', 'treeSectors', '$log'];
-function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors, $log) {
+cwpDialogController.$inject = ['ctrlroomManager', '$mdDialog', 'treeSectors', '$log'];
+function cwpDialogController(ctrlroomManager, $mdDialog, treeSectors, $log) {
   var cwpDialog = this;
   cwpDialog.cwp = ctrlroomManager.getCwp(cwpDialog.cwpId);
 
@@ -134,11 +135,11 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors, $log) {
   };
 
   cwpDialog.isChecked = function(s) {
-    if(_.contains(cwpDialog.cwp.sectors, s)) {
+    if(_.includes(cwpDialog.cwp.sectors, s)) {
       /* Already bound to position */
       return true;
     }
-    if(_.contains(cwpDialog.selectedSectors, s)) {
+    if(_.includes(cwpDialog.selectedSectors, s)) {
       /* In selectedSectors */
       return true;
     }
@@ -147,7 +148,7 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors, $log) {
 
   cwpDialog.isDisabled = function(s) {
     // Disable YR which is special
-    return s === 'YR' || _.contains(cwpDialog.cwp.sectors, s);
+    return s === 'YR' || _.includes(cwpDialog.cwp.sectors, s);
   };
 
   cwpDialog.fromSuggestion = function(sectors) {

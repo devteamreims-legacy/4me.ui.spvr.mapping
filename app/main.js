@@ -3,6 +3,8 @@ import ctrlroom from './ctrlroom/';
 import sectors from './sectors/';
 import api from './api.js';
 
+import _ from 'lodash';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping
@@ -88,13 +90,12 @@ function mappingRegistration(mainOrganService, $state, $injector) {
  */
 
 angular.module('4me.ui.spvr.mapping.errors', [
-  '4me.core.lodash',
   '4me.core.errors'
 ])
 .factory('mapping.errors', mappingErrors);
 
-mappingErrors.$inject = ['_', 'errors'];
-function mappingErrors(_, errors) {
+mappingErrors.$inject = ['errors'];
+function mappingErrors(errors) {
   var service = {};
 
   service.add = function(type, message, reason) {
@@ -105,13 +106,12 @@ function mappingErrors(_, errors) {
 }
 
 angular.module('4me.ui.spvr.mapping.notifications', [
-  '4me.core.lodash',
   '4me.core.notifications'
 ])
 .factory('mapping.notifications', mappingNotifications);
 
-mappingNotifications.$inject = ['_', 'notifications'];
-function mappingNotifications(_, notifications) {
+mappingNotifications.$inject = ['notifications'];
+function mappingNotifications(notifications) {
   var service = {};
 
   service.add = function(priority, title, props) {
@@ -130,7 +130,6 @@ function mappingNotifications(_, notifications) {
 
 // We need another full service here, not some proxy status service
 angular.module('4me.ui.spvr.mapping.status', [
-  '4me.core.lodash',
   '4me.core.status'
 ])
 .factory('mapping.status', mappingStatus);

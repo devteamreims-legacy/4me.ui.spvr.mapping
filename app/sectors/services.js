@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.sectors.services
@@ -8,7 +10,6 @@
  */
 angular.module('4me.ui.spvr.mapping.sectors.services', [
   '4me.core.config',
-  '4me.core.lodash',
   '4me.core.sectors.services',
   '4me.ui.spvr.mapping.errors',
   '4me.ui.spvr.mapping.api',
@@ -16,8 +17,8 @@ angular.module('4me.ui.spvr.mapping.sectors.services', [
 ])
 .factory('sectorSuggestion', sectorSuggestion);
 
-sectorSuggestion.$inject = ['_', '$http', '$q', 'mapping.api', 'mapping.errors'];
-function sectorSuggestion(_, $http, $q, api, errors) {
+sectorSuggestion.$inject = ['$http', '$q', 'mapping.api', 'mapping.errors'];
+function sectorSuggestion($http, $q, api, errors) {
   var service = {};
 
   var suggestPromises = [];

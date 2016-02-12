@@ -87,7 +87,7 @@ function cwpButtonController($mdDialog, ctrlroomManager, $scope) {
       locals: {
         cwpId: cwpButton.cwp.id
       },
-      parent: angular.element(document.body),
+      parent: angular.element(document).find('body'),
       targetEvent: ev,
       clickOutsideToClose: true
     });

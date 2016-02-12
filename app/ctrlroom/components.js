@@ -51,7 +51,8 @@ function cwpButtonController($mdDialog, ctrlroomManager, $scope) {
   function getClassObject() {
     var defaults = {
       'md-warn': false,
-      'md-primary md-hue-3': false
+      'md-primary md-hue-3': false,
+      'md-primary': false
     };
 
     var ret = _.assign({}, defaults);
@@ -59,6 +60,8 @@ function cwpButtonController($mdDialog, ctrlroomManager, $scope) {
       _.assign(ret, defaults, {'md-warn': true});
     } else if(isWithoutSectors()) {
       _.assign(ret, defaults, {'md-primary md-hue-3': true});
+    } else {
+      _.assign(ret, defaults, {'md-primary': true});
     }
     return ret;
   }

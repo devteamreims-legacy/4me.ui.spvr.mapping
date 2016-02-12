@@ -1,5 +1,5 @@
 describe('4me.ui.spvr.mapping.sectors.services', function() {
-  beforeEach(module('4me.ui.spvr.mapping.sectors.services'));
+  beforeEach(angular.mock.module('4me.ui.spvr.mapping.sectors.services'));
 
   describe('sectorSuggestion', function() {
     var sectorSuggestion;

@@ -1,5 +1,5 @@
 describe('4me.ui.spvr.mapping.ctrlroom.services', function() {
-  beforeEach(module('4me.ui.spvr.mapping.ctrlroom.services'));
+  beforeEach(angular.mock.module('4me.ui.spvr.mapping.ctrlroom.services'));
 
   describe('ctrlroomManager', function() {
     var ctrlroomManager;

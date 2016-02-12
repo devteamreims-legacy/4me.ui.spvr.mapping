@@ -1,6 +1,3 @@
-(function() {
-'use strict';
-
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.sectors.services
@@ -56,5 +53,3 @@ function sectorSuggestion(_, $http, $q, api, errors) {
   return service;
 
 }
-
-}());

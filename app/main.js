@@ -1,5 +1,8 @@
-(function() {
-'use strict';
+import constants from './constants.js';
+import ctrlroom from './ctrlroom/';
+import sectors from './sectors/';
+import api from './api.js';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping
@@ -55,7 +58,7 @@ function mappingConfig($stateProvider) {
   });
 };
 
-mappingRegistration = ['mainOrganService', '$state', '$injector'];
+mappingRegistration.$inject = ['mainOrganService', '$state', '$injector'];
 function mappingRegistration(mainOrganService, $state, $injector) {
   var r = mainOrganService.register({
     name: 'mapping',
@@ -160,5 +163,3 @@ function mappingController(errors, notifications, $state, ctrlroomManager) {
   };
 
 }
-
-}());

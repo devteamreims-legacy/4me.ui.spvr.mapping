@@ -1,5 +1,4 @@
-(function() {
-'use strict';
+import services from './services';
 
 /**
  * @ngdoc overview
@@ -12,5 +11,3 @@
 angular.module('4me.ui.spvr.mapping.sectors', [
   '4me.ui.spvr.mapping.sectors.services'
 ]);
-
-}());

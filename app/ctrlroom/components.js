@@ -1,4 +1,4 @@
-(function() {
+import dialog from './dialog/';
 
 /**
  * @ngdoc overview
@@ -209,5 +209,3 @@ function cwpDialogController(_, ctrlroomManager, $mdDialog, treeSectors, $log) {
     }
   }
 }
-
-}());

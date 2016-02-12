@@ -1,6 +1,3 @@
-(function() {
-'use strict';
-
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.ctrlroom.dialog.components
@@ -76,5 +73,3 @@ dialogComponents.directive('fmeMapUrmnSectors', function() {
     templateUrl: 'views/spvr.mapping/app/ctrlroom/dialog/urmn.tpl.html'
   };
 });
-
-}());

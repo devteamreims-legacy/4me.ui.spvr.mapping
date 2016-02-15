@@ -64,6 +64,7 @@ mappingRegistration.$inject = ['mainOrganService', '$state', '$injector'];
 function mappingRegistration(mainOrganService, $state, $injector) {
   var r = mainOrganService.register({
     name: 'mapping',
+    isActive: () => $state.includes('mapping'),
     navigateTo: function() {
       $state.go('mapping');
       this.getNotificationService().markAllAsRead();

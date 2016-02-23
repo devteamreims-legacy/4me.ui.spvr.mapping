@@ -7,3 +7,9 @@ fieldset.sectors-group > legend {
   cursor: pointer;
   cursor: hand;
 }
+
+// Override material angular wrong styles
+
+fieldset.sectors-group {
+  color: #DDD;
+}

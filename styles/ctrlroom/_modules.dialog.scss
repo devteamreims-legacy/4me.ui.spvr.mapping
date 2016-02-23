@@ -3,13 +3,17 @@
  *
  */
 
-fieldset.sectors-group > legend {
+.ctrlroom-dialog fieldset.sectors-group > legend {
   cursor: pointer;
   cursor: hand;
 }
 
 // Override material angular wrong styles
 
-fieldset.sectors-group {
+.ctrlroom-dialog fieldset.sectors-group {
+  color: #DDD;
+}
+
+.ctrlroom-dialog * {
   color: #DDD;
 }

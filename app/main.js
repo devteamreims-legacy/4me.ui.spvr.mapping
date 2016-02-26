@@ -1,4 +1,3 @@
-import constants from './constants.js';
 import ctrlroom from './ctrlroom/';
 import sectors from './sectors/';
 import api from './api.js';
@@ -25,7 +24,6 @@ var m = angular
       '4me.ui.spvr.mapping.errors',
       '4me.ui.spvr.mapping.notifications',
       '4me.ui.spvr.mapping.status',
-      '4me.ui.spvr.mapping.constants',
       '4me.ui.spvr.mapping.ctrlroom',
       '4me.ui.spvr.mapping.sectors'
   ]);

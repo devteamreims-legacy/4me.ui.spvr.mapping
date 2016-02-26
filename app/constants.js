@@ -19,7 +19,6 @@ angular.module('4me.ui.spvr.mapping.constants', [])
     'SE', 'UH', 'XH', 'KH', 'HH'
 ])
 // Config
-.constant('cdsBackendUrl', 'http://localhost:3000')
 .constant('crnaSectors',[
     { name: 'UXR',    children: ['UR', 'XR'] },
     { name: 'UXKR',   children: ['UXR', 'KR'] },

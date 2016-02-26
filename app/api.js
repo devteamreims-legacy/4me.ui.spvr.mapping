@@ -12,7 +12,7 @@
 
 angular.module('4me.ui.spvr.mapping.api', [])
 .constant('mapping.api', {
-  rootPath: 'http://localhost:3000',
+  rootPath: 'http://' + window.location.hostname + ':3100',
   mapping: {
     getMap: '/mapping',
     suggest: function(cwpId) { return '/mapping/cwp/' + cwpId + '/suggest'; },

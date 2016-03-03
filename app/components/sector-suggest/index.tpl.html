@@ -1,0 +1,10 @@
+<h4>Suggestions</h4>
+<md-progress-linear ng-show="$ctrl.isLoading" class="md-warn"></md-progress-linear>
+<div layout="row">
+  <span ng-if="$ctrl.error !== ''">{{$ctrl.error}}</span>
+  <md-button
+    class="md-raised md-primary"
+    ng-repeat="s in $ctrl.suggestions track by $index"
+    ng-click="$ctrl.pickSuggestion(s.sectors)"
+  >{{s.sectors | toSector}}</md-button>
+</div>

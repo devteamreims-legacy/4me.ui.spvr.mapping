@@ -1,7 +1,3 @@
-(function() {
-
-'use strict';
-
 /**
  * @ngdoc overview
  * @name 4me.ui.spvr.mapping.api
@@ -9,20 +5,21 @@
  * A single service called mapping.api which provides api urls for the whole organ
  */
 
-
-angular.module('4me.ui.spvr.mapping.api', [])
-.constant('mapping.api', {
+const api = {
   rootPath: 'http://' + window.location.hostname + ':3100',
   mapping: {
     getMap: '/mapping',
-    suggest: function(cwpId) { return '/mapping/cwp/' + cwpId + '/suggest'; },
+    suggest: (cwpId) => `/mapping/cwp/${cwpId}/suggest`,
     commit: '/mapping' // POST
   },
   cwp: {
     getAll: '/cwp',
-    getSingle: '/cwp', // + cwpId
-    suggest: function(cwpId) { return '/cwp/' + cwpId + '/sectors/suggest'; }
-  }
-});
+    getSingle: (cwpId) => `/cwp/${cwpId}`, // + cwpId
+  },
+  socket: 'http://' + window.location.hostname + ':3100'
+};
 
-}());
+angular.module('4me.ui.spvr.mapping.api', [])
+.constant('mapping.api', api);
+
+export default api;

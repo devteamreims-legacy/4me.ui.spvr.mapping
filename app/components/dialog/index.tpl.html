@@ -1,0 +1,37 @@
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <h2>{{$ctrl.cwpName}} : {{$ctrl.boundSectors}} => {{$ctrl.localSectors}}</h2>
+  </div>
+</md-toolbar>
+<md-dialog-content layout="column">
+<div class="md-dialog-content" layout="column">
+  <fme-map-sector-suggest
+    on-click="$ctrl.fromSuggestion(sectors)"
+    is-loading="$ctrl.suggest.isLoading"
+    error="$ctrl.suggest.error"
+    suggestions="$ctrl.suggestions"
+  ></fme-map-sector-suggest>
+</div>
+  <md-divider></md-divider>
+<div class="md-dialog-content" layout="column">
+  <fme-map-urme-sectors
+    sectors="$ctrl.localSectors"
+    bound-sectors="$ctrl.boundSectors"
+    toggle-sectors="$ctrl.toggleSectors(sectors)"
+  ></fme-map-urme-sectors>
+  <fme-map-urmn-sectors
+    sectors="$ctrl.localSectors"
+    bound-sectors="$ctrl.boundSectors"
+    toggle-sectors="$ctrl.toggleSectors(sectors)"
+  ></fme-map-urmn-sectors>
+</div>
+</md-dialog-content>
+<md-dialog-actions>
+  <span flex></span>
+  <md-button ng-click="$ctrl.cancel()">
+    ANNULER
+  </md-button>
+  <md-button ng-click="$ctrl.confirm()">
+    ACCEPTER
+  </md-button>
+</md-dialog-actions>

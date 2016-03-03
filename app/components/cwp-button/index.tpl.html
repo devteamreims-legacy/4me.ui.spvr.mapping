@@ -1,0 +1,10 @@
+<md-button
+  class="md-fab cwp-button"
+  ng-class="$ctrl.buttonClass"
+  ng-disabled="$ctrl.isDisabled"
+  aria-label="{{$ctrl.cwpName}}"
+  ng-click="$ctrl.onClick()"
+>
+  <span class="position">{{$ctrl.cwpName}}</span>
+  <span class="sector">{{$ctrl.sectors | toSector}}</span>
+</md-button>

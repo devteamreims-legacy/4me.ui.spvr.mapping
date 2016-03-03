@@ -1,0 +1,38 @@
+<div class="URME" layout="row" flex>
+  <fieldset layout="column" class="sectors-group 4H" flex>
+    <legend ng-click="$ctrl.toggleSectors(['HH', 'KH', 'XH', 'UH'])">4H</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HH', 'KH', 'XH', 'UH']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group 4E" flex>
+    <legend ng-click="$ctrl.toggleSectors(['HE', 'KE', 'XE', 'UE'])">4E</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HE', 'KE', 'XE', 'UE']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group KD2F" flex>
+    <legend ng-click="$ctrl.toggleSectors(['KD', 'KF', 'UF'])">KD2F</legend>
+    <md-checkbox 
+      ng-repeat="s in ['KD', 'KF', 'UF']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group FIR" flex>
+    <legend ng-click="$ctrl.toggleSectors(['E', 'SE'])">FIR</legend>
+    <md-checkbox 
+      ng-repeat="s in ['E', 'SE']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+</div>

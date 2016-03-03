@@ -1,0 +1,20 @@
+<div class="URMN" layout="row" flex>
+  <fieldset layout="column" class="sectors-group 5R" flex>
+    <legend ng-click="$ctrl.toggleSectors(['HR', 'YR', 'KR', 'XR', 'UR'])">5R</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HR', 'YR', 'KR', 'XR', 'UR']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+  <fieldset layout="column" class="sectors-group 4N" flex>
+    <legend ng-click="$ctrl.toggleSectors(['HN', 'KN', 'UB', 'UN'])">4N</legend>
+    <md-checkbox 
+      ng-repeat="s in ['HN', 'KN', 'UB', 'UN']" 
+      ng-checked="$ctrl.isChecked(s)"
+      ng-disabled="$ctrl.isDisabled(s)"
+      ng-click="!$ctrl.isDisabled(s) && $ctrl.toggleSector(s)"
+    >{{s}}</md-checkbox>
+  </fieldset>
+</div>

@@ -1,0 +1,63 @@
+<md-progress-linear
+  style="position: absolute;"
+  ng-if="$ctrl.isLoading"
+  class="md-warn"
+  md-mode="query">
+</md-progress-linear>
+<div
+  layout="column"
+  layout-fill
+  layout-align="start center"
+  id="ctrlroom-dashboard"
+  flex
+>
+<div
+  ng-if="$ctrl.isErrored"
+>CACABOUDIN : {{$ctrl.refreshError}} / {{$ctrl.commitError}}</div>
+  <div layout="row" layout-align="center">
+    <fme-map-cwp-button cwp-id="23"></fme-map-cwp-button>
+    <fme-map-cwp-button cwp-id="24"></fme-map-cwp-button>
+  </div>
+  <div layout="row" layout-align="center">
+    <fme-map-cwp-button cwp-id="22"></fme-map-cwp-button>
+    <fme-map-cwp-button cwp-id="25"></fme-map-cwp-button>
+  </div>
+  <div layout="row" layout-align="center">
+    <fme-map-cwp-button cwp-id="21"></fme-map-cwp-button>
+    <fme-map-cwp-button cwp-id="26"></fme-map-cwp-button>
+  </div>
+  <div layout="row" layout-align="center">
+    <fme-map-cwp-button cwp-id="20"></fme-map-cwp-button>
+    <fme-map-cwp-button cwp-id="27"></fme-map-cwp-button>
+  </div>
+  <div layout="row">
+    <div layout="column" flex="40" layout-align="end end">
+      <div layout="row">
+        <fme-map-cwp-button cwp-id="14"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="15"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="16"></fme-map-cwp-button>
+      </div>
+      <div layout="row">
+        <fme-map-cwp-button cwp-id="13"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="12"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="11"></fme-map-cwp-button>
+      </div>
+    </div>
+    <div layout="row" flex layout-align="center center">
+    </div>
+    <div layout="column" flex="40">
+      <div layout="row">
+        <fme-map-cwp-button cwp-id="30"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="31"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="32"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="33"></fme-map-cwp-button>
+      </div>
+      <div layout="row">
+        <fme-map-cwp-button cwp-id="37"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="36"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="35"></fme-map-cwp-button>
+        <fme-map-cwp-button cwp-id="34"></fme-map-cwp-button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,6 +2,18 @@ import ctrlroom from './ctrlroom/';
 import sectors from './sectors/';
 import api from './api.js';
 
+import components from './components/';
+
+import mappingNgRedux from './mappingRedux';
+
+import rootReducer from './reducers/';
+import thunk from 'redux-thunk';
+import deepFreeze from 'redux-freeze';
+import createLogger from 'redux-logger';
+import { combineReducers } from 'redux';
+
+import { bootstrap } from './bootstrap';
+
 import _ from 'lodash';
 
 /**
@@ -12,7 +24,7 @@ import _ from 'lodash';
  *
  * 4me Organ to manage control room mapping
  */
-var m = angular
+const m = angular
   .module('4me.ui.spvr.mapping', [
       'ui.router',
       '4me.core.config',
@@ -21,11 +33,8 @@ var m = angular
       '4me.core.organs.services',
       '4me.core.status',
       // Organ modules
-      '4me.ui.spvr.mapping.errors',
-      '4me.ui.spvr.mapping.notifications',
-      '4me.ui.spvr.mapping.status',
-      '4me.ui.spvr.mapping.ctrlroom',
-      '4me.ui.spvr.mapping.sectors'
+      components,
+      mappingNgRedux
   ]);
 
 /**
@@ -44,17 +53,7 @@ mappingConfig.$inject = ['$stateProvider'];
 function mappingConfig($stateProvider) {
   $stateProvider.state('mapping', {
     url: '/mapping',
-    templateUrl: 'views/spvr.mapping/app/index.tpl.html',
-    controller: mappingController,
-    controllerAs: 'mapping',
-    resolve: {
-      ctrlroom: ['ctrlroomManager', function(ctrlroomManager) {
-        return ctrlroomManager.bootstrap();
-      }],
-      treeSectors: ['treeSectors', function(treeSectors) {
-        return treeSectors.bootstrap();
-      }]
-    }
+    templateUrl: 'views/spvr.mapping/app/index.tpl.html'
   });
 };
 
@@ -88,10 +87,7 @@ function mappingRegistration(mainOrganService, $state, $injector) {
  *
  */
 
-angular.module('4me.ui.spvr.mapping.errors', [
-  '4me.core.errors'
-])
-.factory('mapping.errors', mappingErrors);
+m.factory('mapping.errors', mappingErrors);
 
 mappingErrors.$inject = ['errors'];
 function mappingErrors(errors) {
@@ -104,10 +100,7 @@ function mappingErrors(errors) {
   return _.defaults(service, errors);
 }
 
-angular.module('4me.ui.spvr.mapping.notifications', [
-  '4me.core.notifications'
-])
-.factory('mapping.notifications', mappingNotifications);
+m.factory('mapping.notifications', mappingNotifications);
 
 mappingNotifications.$inject = ['notifications'];
 function mappingNotifications(notifications) {
@@ -128,10 +121,7 @@ function mappingNotifications(notifications) {
 
 
 // We need another full service here, not some proxy status service
-angular.module('4me.ui.spvr.mapping.status', [
-  '4me.core.status'
-])
-.factory('mapping.status', mappingStatus);
+m.factory('mapping.status', mappingStatus);
 
 mappingStatus.$inject = ['statusFactory'];
 function mappingStatus(statusFactory) {
@@ -139,25 +129,20 @@ function mappingStatus(statusFactory) {
   return service;
 }
 
+m.config(setupRedux);
 
-mappingController.$inject = ['mapping.errors', 'mapping.notifications', '$state', 'ctrlroomManager'];
-function mappingController(errors, notifications, $state, ctrlroomManager) {
-  var mapping = this;
+setupRedux.$inject = ['$mappingNgReduxProvider'];
+function setupRedux($mappingNgReduxProvider) {
 
-  mapping.isLoading = function() {
-    return ctrlroomManager.isLoading();
-  };
+  const logger = createLogger();
+  $mappingNgReduxProvider.createStoreWith(rootReducer, [thunk, deepFreeze, logger]);
+}
 
-  mapping.hasChanges = function() {
-    return ctrlroomManager.hasChanges();
-  };
+m.run(bootstrapXman);
 
-  mapping.revert = function() {
-    return ctrlroomManager.revert();
-  };
+bootstrapXman.$inject = ['$mappingNgRedux', '$rootScope', 'myCwp', 'mySector'];
+function bootstrapXman($mappingNgRedux, $rootScope, myCwp, mySector) {
+  const store = $mappingNgRedux;
 
-  mapping.commit = function() {
-    return ctrlroomManager.commit();
-  };
-
+  bootstrap(store, $rootScope, myCwp, mySector);
 }

@@ -9,6 +9,14 @@ import {
   getRefreshError
 } from '../../selectors/map';
 
+import {
+  refreshMap
+} from '../../actions/map';
+
+import {
+  refreshCwps
+} from '../../actions/cwp';
+
 /**
  * @ngdoc overview
  * @name 4me.ui.cwp.xman.flight-list
@@ -34,7 +42,17 @@ function controlRoomController($mappingNgRedux, $scope) {
       refreshError: getRefreshError(state)
   });
 
-  let unsubscribe = $mappingNgRedux.connect(mapStateToThis)(this);
+  const mapDispatchToThis = (dispatch) => {
+
+    const refresh = () => dispatch(refreshCwps())
+      .then(() => dispatch(refreshMap()));
+
+    return {
+      refresh
+    };
+  };
+
+  let unsubscribe = $mappingNgRedux.connect(mapStateToThis, mapDispatchToThis)(this);
   $scope.$on('$destroy', unsubscribe);
 
 }

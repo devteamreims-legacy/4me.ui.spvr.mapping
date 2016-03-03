@@ -26,11 +26,9 @@ export function bootstrap(store, $rootScope, myCwp, mySector) {
   console.log('Attaching handlers to socket');
   setupSocketIo(store.dispatch, socketIo);
 
-  console.log('Refreshing CWPs');
-  store.dispatch(refreshCwps());
-
-  console.log('Fetching map from backend');
-  store.dispatch(refreshMap());
+  console.log('Refreshing CWPs and map from backend');
+  store.dispatch(refreshCwps())
+    .then(() => store.dispatch(refreshMap()));
 
   console.log('Attaching rootScope handlers');
   // This needs some serious refactor, in the core

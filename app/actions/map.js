@@ -114,7 +114,7 @@ export function bindSectorsToCwp(cwpId, sectors) {
 
 function commitMap(map) {
   return (dispatch, getState) => {
-    const apiUrl = api.rootPath + api.mapping.commit + 'cacaboudin';
+    const apiUrl = api.rootPath + api.mapping.commit;
 
     return axios.post(apiUrl, map)
       .catch((error) => {

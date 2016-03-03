@@ -13,7 +13,12 @@
 >
 <div
   ng-if="$ctrl.isErrored"
->CACABOUDIN : {{$ctrl.refreshError}} / {{$ctrl.commitError}}</div>
+  layout="column"
+>
+  <span ng-if="$ctrl.refreshError">Refresh error : {{$ctrl.refreshError}} <md-button class="md-raised" ng-click="$ctrl.refresh()">Refresh</md-button></span>
+  <span ng-if="$ctrl.commitError">Commit error : {{$ctrl.commitError}}</span>
+
+</div>
   <div layout="row" layout-align="center">
     <fme-map-cwp-button cwp-id="23"></fme-map-cwp-button>
     <fme-map-cwp-button cwp-id="24"></fme-map-cwp-button>

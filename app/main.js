@@ -1,5 +1,3 @@
-import ctrlroom from './ctrlroom/';
-import sectors from './sectors/';
 import api from './api.js';
 
 import components from './components/';

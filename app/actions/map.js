@@ -44,7 +44,7 @@ export function refreshMap() {
 
 
     console.log('Loading Mapping from backend');
-    
+
     return axios.get(apiUrl)
       .then((response) => {
         return dispatch(complete(response.data));
@@ -84,23 +84,28 @@ export function bindSectorsToCwp(cwpId, sectors) {
       return Object.assign({}, cwp, {sectors: newSectors});
     };
 
-    const addSectorsToGivenCwp = (cwp) => {
-      if(parseInt(cwp.cwpId) === parseInt(cwpId)) {
-        const newSectors = _(_.get(cwp, 'sectors', []))
-          .concat(...sectors)
-          .uniq()
-          .value();
+    const addSectorsToGivenCwp = () => {
+      const newSectors = _(boundSectors)
+        .concat(...sectors)
+        .uniq()
+        .value();
 
-        return Object.assign({}, cwp, {sectors: newSectors});
-      }
-      return cwp;
+      return {
+        cwpId: parseInt(cwpId),
+        sectors: newSectors
+      };
     };
 
     // Compute new map
     const newMap = _(getMap(getState()))
+      .reject(cwp => cwp.cwpId === cwpId)
       .map(removeSectorsFromOtherCwps)
-      .map(addSectorsToGivenCwp)
+      .reject(cwp => _.isEmpty(cwp.sectors))
+      .concat(addSectorsToGivenCwp())
       .value();
+
+    console.log('New map is :');
+    console.log(newMap);
 
 
 
